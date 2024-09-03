@@ -117,5 +117,7 @@ return [
     */
 
     'password_timeout' => 10800,
+    'default_driver' => env('AUTH_DRIVER', 'passport'),
+
 
 ];
