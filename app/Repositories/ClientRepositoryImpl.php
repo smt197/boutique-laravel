@@ -38,7 +38,7 @@ class ClientRepositoryImpl implements ClientRepository
 
     public function findByTelephone($telephone)
     {
-        return Client::where('telephone', $telephone)->with('user:id,nom,prenom,login,photo')->first();
+        return Client::with('user:id,nom,prenom,login,photo')->firstOrFail();
     }
 
     public function addUserToClient($id, array $data)

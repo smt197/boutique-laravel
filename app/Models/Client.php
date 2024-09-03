@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Scopes\TelephoneScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,6 +21,17 @@ class Client extends Model
 
     function dettes() {
         return $this->hasMany(Dette::class);
+    }
+
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::addGlobalScope(new TelephoneScope(request()->get('telephone')));
     }
 
 }
