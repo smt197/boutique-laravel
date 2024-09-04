@@ -4,6 +4,8 @@ namespace App\Repositories;
 use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Exceptions\RepositoryError;
+
 
 class ClientRepositoryImpl implements ClientRepository
 {
@@ -49,25 +51,38 @@ class ClientRepositoryImpl implements ClientRepository
 
     public function addUserToClient($id, array $data)
     {
-        $client = $this->find($id);
+        try {
+            // Recherche du client par son ID
+            $client = $this->find($id);
 
-        if ($client->user_id) {
-            throw new \Exception('Ce client a déjà un compte utilisateur.');
+            if ($client->user_id) {
+                throw new RepositoryError('Ce client a déjà un compte utilisateur.');
+            }
+
+            $user = User::create([
+                'nom' => $data['nom'],
+                'prenom' => $data['prenom'],
+                'login' => $data['login'],
+                'password' => bcrypt($data['password']),
+                'photo' => $data['photo'],
+                'role_id' => $data['role_id'],
+            ]);
+
+            $client->user_id = $user->id;
+            $client->save();
+
+            return $client;
+
+        } catch (RepositoryError $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Erreur lors de l\'ajout de l\'utilisateur au client: ' . $e->getMessage(),
+                'code' => 400
+            ], 400);
+        } catch (\Throwable $e) {
+            // Gestion des autres erreurs non spécifiques
+            throw new RepositoryError('Une erreur inattendue s\'est produite: ' . $e->getMessage());
         }
-
-        $user = User::create([
-            'nom' => $data['nom'],
-            'prenom' => $data['prenom'],
-            'login' => $data['login'],
-            'password' => bcrypt($data['password']),
-            'photo' => $data['photo'],
-            'role_id' => $data['role_id'],
-        ]);
-
-        $client->user_id = $user->id;
-        $client->save();
-
-        return $client;
     }
 
     public function getClientsWithFilters(Request $request)

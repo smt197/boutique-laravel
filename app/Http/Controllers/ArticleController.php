@@ -15,6 +15,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 use App\Enums\StatusResponseEnum;
 use Exception;
 use App\Http\Requests\UpdateStockRequest;
+use App\Exeptions\ControllerError;
 
 
 class ArticleController extends Controller
@@ -68,9 +69,9 @@ class ArticleController extends Controller
             $articleData = $request->only('libelle','reference', 'prix', 'quantite');
             $article = Article::create($articleData);
 
-            return $this->sendResponse(new ArticleResource($article));
-        } catch (Exception $e) {
-            return $this->sendResponse(['error' => $e->getMessage()], StatusResponseEnum::ECHEC, 500);
+            return (new ArticleResource($article));
+        } catch (ControllerError $e) {
+            return ['error' => $e->getMessage()];
 
         }
     }
@@ -94,7 +95,7 @@ class ArticleController extends Controller
             $article->update($articleData);
 
             return $this->sendResponse(new ArticleResource($article));
-        } catch (Exception $e) {
+        } catch (ControllerError $e) {
             return $this->sendResponse(['error' => $e->getMessage()], StatusResponseEnum::ECHEC, 500);
 
         }
@@ -131,9 +132,9 @@ class ArticleController extends Controller
                 'error' => $notFoundArticles
             ], StatusResponseEnum::SUCCESS, 200);
 
-        } catch (Exception $e) {
+        } catch (ControllerError $e) {
             DB::rollBack();
-            return $this->sendResponse(['error' => $e->getMessage()], StatusResponseEnum::ECHEC, 500);
+            return ['error' => $e->getMessage()];
         }
     }
 
@@ -144,13 +145,13 @@ class ArticleController extends Controller
         $article = Article::find($id);
 
         if (!$article) {
-            return $this->sendResponse(['error' => 'Article non trouvé'], StatusResponseEnum::ECHEC, 404);
+            return ['error' => 'Article non trouvé'];
         }
 
         $article->quantite = $request->input('qteStock');
         $article->save();
 
-        return $this->sendResponse($article, StatusResponseEnum::SUCCESS, 200, 'Quantité de stock mise à jour');
+        return $article;
     }
 
     /**
@@ -162,9 +163,9 @@ class ArticleController extends Controller
         try {
             $article->delete();
 
-            return $this->sendResponse(null, StatusResponseEnum::SUCCESS, 204);
-        } catch (Exception $e) {
-            return $this->sendResponse(['error' => $e->getMessage()], StatusResponseEnum::ECHEC, 500);
+            return [null,'message' => 'article deleted successfully','status' =>'success'];
+        } catch (ControllerError $e) {
+            return ['error' => $e->getMessage()];
 
         }
     }
@@ -183,7 +184,6 @@ class ArticleController extends Controller
 
         // Recherche de l'article par libelle
         $libelle = $request->input('libelle');
-        // $article = Article::where('libelle', $libelle)->first();
         return Article::WhereLibelle($libelle)->firstOrFail();
 
         // Vérification si l'article existe

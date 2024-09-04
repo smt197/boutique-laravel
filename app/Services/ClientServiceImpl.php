@@ -59,33 +59,23 @@ class ClientServiceImpl implements ClientService
 
 
     public function getClientWithPhotoInBase64($telephone)
-{
-    // Récupérer le client en fonction du numéro de téléphone
-    $client = $this->getClientByTelephone($telephone);
-
-    // Vérifier si le client existe et s'il a une photo
-    if ($client && $client->photo) {
-        try {
-            // Lire le contenu de l'image depuis l'URL
-            $photoContent = file_get_contents($client->photo);
-            
-            // Vérifier si le contenu a été correctement récupéré
-            if ($photoContent !== false) {
-                // Convertir le contenu de l'image en base64
-                $client->photo = base64_encode($photoContent);
-            } else {
-                // En cas d'échec de la récupération, mettre une valeur par défaut ou gérer l'erreur
-                $client->photo = null;
-            }
-        } catch (\Exception $e) {
-            // Gérer les exceptions en cas de problème avec la récupération ou la conversion
-            $client->photo = null;
+    {
+        // Étape 1 : Récupérer le client en fonction du numéro de téléphone
+        $client = $this->getClientByTelephone($telephone);
+    
+        // Étape 2 : Vérifier si le client existe et s'il a une photo
+        if ($client && $client->photo) {
+            // Étape 3 : Lire le fichier photo depuis le disque
+            $path = str_replace('/storage/', '', $client->photo);
+            $photoContent = Storage::disk('public')->get($path);
+    
+            // Étape 4 : Convertir le contenu de la photo en base64
+            $client->photo = base64_encode($photoContent);
         }
+    
+        // Étape 5 : Retourner l'objet client avec la photo en base64 (si disponible)
+        return $client;
     }
-
-    // Retourner l'objet client avec la photo en base64 (si disponible)
-    return $client;
-}
 
 
 }

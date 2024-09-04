@@ -38,6 +38,9 @@ class StoreClientRequest extends FormRequest
             'user.prenom' => ['required_with:user','string'],
             'user.login' => ['required_with:user','string'],
             // 'user.password' => ['required_with:user', new CustomPasswordRule(),'confirmed'],
+            'user.photo' => ['required_with:user','image', 'mimes:jpeg,png,jpg'],
+            // 'user.role' => ['required_with:user','array'],
+            'user.role_id' => ['required_with:user.role_id','integer'],
         ];
 
         return $rules;

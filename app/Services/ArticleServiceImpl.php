@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\ArticleRepository;
 use App\Models\Article;
+use App\Exeptions\ServiceError;
 
 class ArticleServiceImpl implements ArticleService
 {
@@ -35,7 +36,7 @@ class ArticleServiceImpl implements ArticleService
         $article = $this->articleRepository->findById($id);
 
         if (!$article) {
-            throw new \Exception('Article non trouvé');
+            throw new ServiceError('Article non trouvé');
         }
 
         return $article;
@@ -46,7 +47,7 @@ class ArticleServiceImpl implements ArticleService
         $article = $this->articleRepository->update($id, $data);
 
         if (!$article) {
-            throw new \Exception('Échec de la mise à jour de l\'article');
+            throw new ServiceError('Échec de la mise à jour de l\'article');
         }
 
         return $article;
@@ -57,7 +58,7 @@ class ArticleServiceImpl implements ArticleService
         $success = $this->articleRepository->delete($id);
 
         if (!$success) {
-            throw new \Exception('Échec de la suppression de l\'article');
+            throw new ServiceError('Échec de la suppression de l\'article');
         }
 
         return $success;
@@ -78,7 +79,7 @@ class ArticleServiceImpl implements ArticleService
         $article = $this->articleRepository->updateStockById($id, $quantity);
 
         if (!$article) {
-            throw new \Exception('Échec de la mise à jour de la quantité de stock');
+            throw new ServiceError('Échec de la mise à jour de la quantité de stock');
         }
 
         return $article;

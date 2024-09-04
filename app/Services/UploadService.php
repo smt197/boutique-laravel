@@ -25,4 +25,23 @@ class UploadService
         // Retourner le chemin public du fichier
         return Storage::url($filePath);
     }
+
+    /**
+     * Convertir une image en base64 après l'avoir téléchargée.
+     *
+     * @param \Illuminate\Http\UploadedFile $file
+     * @param string $path
+     * @return string
+     */
+    public function uploadImageAndConvertToBase64(UploadedFile $file, $path = 'images'): string
+    {
+        // Téléverser l'image et obtenir le chemin du fichier
+        $filePath = $this->uploadImage($file, $path);
+
+        // Lire le contenu du fichier
+        $fileContent = Storage::disk('public')->get($filePath);
+
+        // Convertir le contenu du fichier en base64
+        return base64_encode($fileContent);
+    }
 }
