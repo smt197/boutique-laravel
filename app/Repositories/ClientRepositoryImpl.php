@@ -40,6 +40,12 @@ class ClientRepositoryImpl implements ClientRepository
     {
         return Client::with('user:id,nom,prenom,login,photo')->firstOrFail();
     }
+    // recuperer la photo d'un client
+
+    public function findPhoto($id){
+        return Client::find($id)->photo;
+    }
+
 
     public function addUserToClient($id, array $data)
     {

@@ -34,6 +34,7 @@ class RestResponseMiddleware
                 'data' => $original ?? null,  // Utiliser les données originales si disponibles
                 'status' => StatusResponseEnum::SUCCESS->value,
                 'message' => 'Opération réussie',
+                'code' => 201
             ], $response->status());
         }
 

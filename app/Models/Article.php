@@ -17,4 +17,16 @@ class Article extends Model
     {
         return $this->belongsToMany(Dette::class, 'article_dette')->withPivot('qteVente', 'prixVente');
     }
+
+    /**
+     * Scope a query to filter clients by telephone.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $telephone
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function WhereLibelle($libelle)
+    {
+        return self::where('libelle', $libelle);
+    }
 }

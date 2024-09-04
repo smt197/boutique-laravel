@@ -15,4 +15,5 @@ interface ClientRepository
     public function getClientsWithFilters(Request $request);
     public function findWithDettes($id);
     public function findWithUser($id);
+    public function findPhoto($id);
 }

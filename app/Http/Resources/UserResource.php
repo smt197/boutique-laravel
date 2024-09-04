@@ -18,7 +18,7 @@ class UserResource extends JsonResource
             'nom' => $this->nom,
             'prenom' => $this->prenom,
             'login' => $this->login,
-            'photo' => $this->photo,
+            'photo' => $this->photo ? 'data:image/png;base64,' . $this->photo : null,
             'role_id' => $this->role_id,
             'active' => $this->active,
             'role' => $this->when($this->role_id, function () {

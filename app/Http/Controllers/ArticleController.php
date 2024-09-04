@@ -183,7 +183,8 @@ class ArticleController extends Controller
 
         // Recherche de l'article par libelle
         $libelle = $request->input('libelle');
-        $article = Article::where('libelle', $libelle)->first();
+        // $article = Article::where('libelle', $libelle)->first();
+        return Article::WhereLibelle($libelle)->firstOrFail();
 
         // Vérification si l'article existe
         if ($article) {

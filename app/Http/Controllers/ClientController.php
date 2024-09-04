@@ -58,7 +58,8 @@ class ClientController extends Controller
         $this->authorize('viewAny', Client::class);
 
         $validated = $request->validate(['telephone' => 'required|string|size:9']);
-        $client = $this->clientService->getClientByTelephone($validated['telephone']);
+        // $client = $this->clientService->getClientByTelephone($validated['telephone']);
+        $client = $this->clientService->getClientWithPhotoInBase64($validated['telephone']);
 
         if ($client) {
             return new ClientResource($client);

@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Repositories\ClientRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ClientServiceImpl implements ClientService
 {
@@ -54,5 +55,37 @@ class ClientServiceImpl implements ClientService
     public function deleteClient($id){
         return $this->clientRepository->delete($id);
     }
+
+
+
+    public function getClientWithPhotoInBase64($telephone)
+{
+    // Récupérer le client en fonction du numéro de téléphone
+    $client = $this->getClientByTelephone($telephone);
+
+    // Vérifier si le client existe et s'il a une photo
+    if ($client && $client->photo) {
+        try {
+            // Lire le contenu de l'image depuis l'URL
+            $photoContent = file_get_contents($client->photo);
+            
+            // Vérifier si le contenu a été correctement récupéré
+            if ($photoContent !== false) {
+                // Convertir le contenu de l'image en base64
+                $client->photo = base64_encode($photoContent);
+            } else {
+                // En cas d'échec de la récupération, mettre une valeur par défaut ou gérer l'erreur
+                $client->photo = null;
+            }
+        } catch (\Exception $e) {
+            // Gérer les exceptions en cas de problème avec la récupération ou la conversion
+            $client->photo = null;
+        }
+    }
+
+    // Retourner l'objet client avec la photo en base64 (si disponible)
+    return $client;
+}
+
 
 }
