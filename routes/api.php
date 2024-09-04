@@ -6,6 +6,16 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\UserController;
 
+
+use Illuminate\Support\Facades\Mail;
+use App\Mail\QRCodeMail;
+
+Route::get('/test-email', function () {
+    $qrCodeBase64 = base64_encode('dummy qr code data'); // Exemple de QR code base64
+    Mail::to('serignembayet@gmail.com')->send(new QRCodeMail($qrCodeBase64));
+    return 'Email sent!';
+});
+
 Route::prefix('v1')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/token/refresh', [AuthController::class, 'refreshToken']);

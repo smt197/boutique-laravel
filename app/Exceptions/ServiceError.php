@@ -1,5 +1,5 @@
 <?php
-namespace App\Exeptions;
+namespace App\Exceptions;
 
 use RuntimeException;
 

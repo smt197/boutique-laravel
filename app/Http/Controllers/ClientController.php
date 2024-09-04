@@ -8,8 +8,10 @@ use App\Http\Resources\ClientCollection;
 use App\Http\Resources\ClientResource;
 use App\Services\ClientService;
 use App\Services\UploadService;
+use App\Services\QRCodeService;
+use App\Services\EmailService;
+use App\Services\PdfService;
 use App\Traits\RestResponseTrait;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Client;
@@ -24,11 +26,18 @@ class ClientController extends Controller
 
     protected $clientService;
     protected $uploadService;
+    protected $qrCodeService;
+    protected $emailService;
+    protected $pdfService;
 
-    public function __construct(ClientService $clientService, UploadService $uploadService)
+
+    public function __construct(ClientService $clientService, UploadService $uploadService, QRCodeService $qrCodeService, EmailService $emailService, PdfService $pdfService)
     {
         $this->clientService = $clientService;
         $this->uploadService = $uploadService;
+        $this->qrCodeService = $qrCodeService;
+        $this->emailService = $emailService;
+        $this->pdfService = $pdfService;
         $this->authorizeResource(Client::class, 'client');
     }
 
@@ -39,7 +48,6 @@ class ClientController extends Controller
         $clients = $this->clientService->getAllClients($request);
         return new ClientCollection($clients);
     }
-
     public function store(StoreClientRequest $request)
     {
         DB::beginTransaction();
@@ -85,19 +93,33 @@ class ClientController extends Controller
                 $client->user()->associate($user);
                 $client->save();
             }
+            
+            // Générer le code QR pour le client
+            $qrData = $client->surname . ' ' . $client->telephone;
+            $qrCodeBase64 = $this->qrCodeService->generateBase64QrCode($qrData);
+            $client->qr_code = $qrCodeBase64;
+            $client->save();
+
+            // Générer le PDF avec le QR Code
+            $pdf = $this->pdfService->generateQrCodePdf($qrCodeBase64);
+
+            // Envoyer l'email avec le PDF en pièce jointe
+            if ($client->user->login) {
+                $this->emailService->sendQrCodeEmail($client->user->login, $pdf);
+                $client->user->save();
+            }
 
             DB::commit();
             return new ClientResource($client);
 
         } catch (ControllerError $e) {
             DB::rollBack();
-            throw new ControllerError('Erreur lors de la création du client: ' . $e->getMessage());
+            return $this->sendResponse(['error' => $e->getMessage()], StatusResponseEnum::ECHEC, 'Erreur lors de la création du client', 500);
         } catch (\Throwable $e) {
             DB::rollBack();
-            throw new ControllerError('Erreur inattendue: ' . $e->getMessage());
+            return $this->sendResponse(['error' => 'Erreur inattendue: ' . $e->getMessage()], StatusResponseEnum::ECHEC, 'Erreur lors de la création du client', 500);
         }
     }
-
     public function show(string $id)
     {
         try {
@@ -106,9 +128,10 @@ class ClientController extends Controller
 
             return new ClientResource($client);
         } catch (\Throwable $e) {
-            throw new ControllerError('Erreur lors de la récupération du client: ' . $e->getMessage());
+            return $this->sendResponse(['error' => 'Erreur lors de la récupération du client: ' . $e->getMessage()], StatusResponseEnum::ECHEC, 'Erreur lors de la récupération du client', 500);
         }
     }
+
 
     public function showClientByTelephone(Request $request)
     {
@@ -121,10 +144,10 @@ class ClientController extends Controller
             if ($client) {
                 return new ClientResource($client);
             } else {
-                return [null, 'Statut'=>'ECHEC', 'message'=>'Client non trouvé', 'code'=>'404'];
+                return $this->sendResponse(null, StatusResponseEnum::ECHEC, 'Client non trouvé', 404);
             }
         } catch (\Throwable $e) {
-            throw new ControllerError('Erreur lors de la recherche du client par téléphone: ' . $e->getMessage());
+            return $this->sendResponse(['error' => 'Erreur lors de la recherche du client par téléphone: ' . $e->getMessage()], StatusResponseEnum::ECHEC, 'Erreur lors de la recherche du client', 500);
         }
     }
 
@@ -136,7 +159,7 @@ class ClientController extends Controller
             $client = $this->clientService->addUserToClient($id, $request->validated());
             return new ClientResource($client);
         } catch (\Throwable $e) {
-            throw new ControllerError('Erreur lors de l\'ajout du compte utilisateur au client: ' . $e->getMessage());
+            return $this->sendResponse(['error' => 'Erreur lors de l\'ajout du compte utilisateur au client: ' . $e->getMessage()], StatusResponseEnum::ECHEC, 'Erreur lors de l\'ajout du compte utilisateur', 500);
         }
     }
 
@@ -147,12 +170,12 @@ class ClientController extends Controller
             $this->authorize('view', $client);
 
             if (!$client) {
-                return [null, 'Statut'=>'ECHEC', 'message'=>'Client non trouvé', 'code'=>'404'];
+                return $this->sendResponse(null, StatusResponseEnum::ECHEC, 'Client non trouvé', 404);
             }
 
-            return ($client->dettes);
+            return $this->sendResponse($client->dettes, StatusResponseEnum::SUCCESS, 'Dettes récupérées avec succès', 200);
         } catch (\Throwable $e) {
-            throw new ControllerError('Erreur lors de la récupération des dettes du client: ' . $e->getMessage());
+            return $this->sendResponse(['error' => 'Erreur lors de la récupération des dettes du client: ' . $e->getMessage()], StatusResponseEnum::ECHEC, 'Erreur lors de la récupération des dettes', 500);
         }
     }
 
@@ -163,12 +186,12 @@ class ClientController extends Controller
             $this->authorize('view', $client);
 
             if (!$client) {
-                return [null, 'Statut'=>'ECHEC', 'message'=>'Client non trouvé', 'code'=>'404'];
+                return $this->sendResponse(null, StatusResponseEnum::ECHEC, 'Client non trouvé', 404);
             }
 
             return new ClientResource($client);
         } catch (\Throwable $e) {
-            throw new ControllerError('Erreur lors de la récupération des informations du client: ' . $e->getMessage());
+            return $this->sendResponse(['error' => 'Erreur lors de la récupération des informations du client: ' . $e->getMessage()], StatusResponseEnum::ECHEC, 'Erreur lors de la récupération des informations du client', 500);
         }
     }
 }
