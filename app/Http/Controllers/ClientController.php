@@ -79,13 +79,11 @@ class ClientController extends Controller
 
                 // Gérer l'image si elle est fournie
                 if ($request->hasFile('user.photo')) {
-                    $image = $request->file('user.photo');
-                    $imageContents = file_get_contents($image->getRealPath());
-                    $imageContents = mb_convert_encoding($imageContents, 'UTF-8', 'UTF-8');
-                    $userData['photo'] = base64_encode($imageContents);
-                } else {
-                    $userData['photo'] = null;
-                }
+                $image = $request->file('user.photo');
+                $userData['photo'] = $this->uploadService->uploadImageAndConvertToBase64($image);
+            } else {
+                $userData['photo'] = null;
+            }
 
                 // Créer l'utilisateur associé
                 $user = User::create($userData);
@@ -111,7 +109,7 @@ class ClientController extends Controller
             }
 
             DB::commit();
-            return response()->json($client, 200, [], JSON_UNESCAPED_UNICODE);
+            return new ClientResource($client);
 
         } catch (ControllerError $e) {
             DB::rollBack();
