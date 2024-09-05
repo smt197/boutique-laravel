@@ -11,6 +11,7 @@ use App\Services\UploadService;
 use App\Services\QRCodeService;
 use App\Services\EmailService;
 use App\Services\PdfService;
+use App\Jobs\SendClientEmailJob; 
 use App\Traits\RestResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -31,12 +32,11 @@ class ClientController extends Controller
     protected $pdfService;
 
 
-    public function __construct(ClientService $clientService, UploadService $uploadService, QRCodeService $qrCodeService, EmailService $emailService, PdfService $pdfService)
+    public function __construct(ClientService $clientService, UploadService $uploadService, QRCodeService $qrCodeService, PdfService $pdfService)
     {
         $this->clientService = $clientService;
         $this->uploadService = $uploadService;
         $this->qrCodeService = $qrCodeService;
-        $this->emailService = $emailService;
         $this->pdfService = $pdfService;
         $this->authorizeResource(Client::class, 'client');
     }
@@ -81,6 +81,7 @@ class ClientController extends Controller
                 if ($request->hasFile('user.photo')) {
                     $image = $request->file('user.photo');
                     $imageContents = file_get_contents($image->getRealPath());
+                    $imageContents = mb_convert_encoding($imageContents, 'UTF-8', 'UTF-8');
                     $userData['photo'] = base64_encode($imageContents);
                 } else {
                     $userData['photo'] = null;
@@ -103,14 +104,14 @@ class ClientController extends Controller
             // Générer le PDF avec le QR Code
             $pdf = $this->pdfService->generateQrCodePdf($qrCodeBase64);
 
-            // Envoyer l'email avec le PDF en pièce jointe
+            // Dispatch du Job pour envoyer l'email avec le PDF
             if ($client->user->login) {
-                $this->emailService->sendQrCodeEmail($client->user->login, $pdf);
+                SendClientEmailJob::dispatch($client->user->login, $pdf);
                 $client->user->save();
             }
 
             DB::commit();
-            return new ClientResource($client);
+            return response()->json($client, 200, [], JSON_UNESCAPED_UNICODE);
 
         } catch (ControllerError $e) {
             DB::rollBack();

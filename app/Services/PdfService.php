@@ -2,17 +2,22 @@
 
 namespace App\Services;
 
-use Dompdf\Dompdf;
-use Dompdf\Options;
-use Illuminate\Support\Facades\View;
 use Barryvdh\DomPDF\Facade\Pdf;
-
 
 class PdfService
 {
     public function generateQrCodePdf($qrCodeBase64)
     {
+        // Générer le PDF à partir de la vue
         $pdf = Pdf::loadView('pdfs.qr_code', compact('qrCodeBase64'));
-        return $pdf->output(); // retourne le contenu binaire du PDF
+        
+        // Définir le chemin où le PDF sera enregistré
+        $pdfFilePath = 'pdfs/client_qrcode_' . time() . '.pdf';
+        
+        // Enregistrer le fichier PDF dans le stockage public
+        \Illuminate\Support\Facades\Storage::put('public/' . $pdfFilePath, $pdf->output());
+
+        // Retourner le chemin d'accès au fichier PDF
+        return $pdfFilePath;
     }
 }
