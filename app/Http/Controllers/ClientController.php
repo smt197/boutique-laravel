@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Client;
 use App\Enums\StatusResponseEnum;
+use App\Events\PhotoUploaded;
 use App\Models\Role;
 use App\Models\User;
 use App\Exceptions\ControllerError;
@@ -74,23 +75,22 @@ class ClientController extends Controller
                     'prenom' => $request->input('user.prenom'),
                     'login' => $request->input('user.login'),
                     'password' => bcrypt($request->input('user.password')), // Hash du mot de passe
-                    'role_id' => $role->id
+                    'role_id' => $role->id,
+                    'photo' => null, // Initialement vide
                 ];
 
-                // Gérer l'image si elle est fournie
-                if ($request->hasFile('user.photo')) {
-                $image = $request->file('user.photo');
-                $userData['photo'] = $this->uploadService->uploadImageAndConvertToBase64($image);
-            } else {
-                $userData['photo'] = null;
-            }
-
+                
                 // Créer l'utilisateur associé
                 $user = User::create($userData);
-                
                 // Associer l'utilisateur avec le client
                 $client->user()->associate($user);
                 $client->save();
+                // Déclencher l'événement pour l'upload de la photo
+                if ($request->hasFile('user.photo')) {
+                    $file = $request->file('user.photo');
+                    $filePath = $this->uploadService->uploadImageAndConvertToBase64($file); // obtenez le chemin du fichier
+                    event(new PhotoUploaded($filePath, $user->id));
+                }
             }
             
             // Générer le code QR pour le client

@@ -20,6 +20,7 @@ class ClientResource extends JsonResource
             'adresse' => $this->adresse,
             'telephone' => $this->telephone,
             'qr_code' => $this->qr_code,
+            'photo' => $this->photo,
             'user' => $this->when($this->user_id, function () {
                 return new UserResource($this->user);
             }),
