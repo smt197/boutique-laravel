@@ -51,72 +51,13 @@ class ClientController extends Controller
     }
     public function store(StoreClientRequest $request)
     {
-        DB::beginTransaction();
-
         try {
-            // Extraire les données du client de la requête
-            $clientData = $request->only(['surname', 'adresse', 'telephone']);
-            
-            // Créer le client
-            $client = Client::create($clientData);
-            
-            // Vérifier si les données utilisateur sont fournies
-            if ($request->has('user')) {
-                $roleId = $request->input('user.role_id');
-                $role = Role::find($roleId);
-                
-                if (!$role) {
-                    throw new ControllerError("Le rôle spécifié n'existe pas.");
-                }
-                
-                // Préparer les données utilisateur
-                $userData = [
-                    'nom' => $request->input('user.nom'),
-                    'prenom' => $request->input('user.prenom'),
-                    'login' => $request->input('user.login'),
-                    'password' => bcrypt($request->input('user.password')), // Hash du mot de passe
-                    'role_id' => $role->id,
-                    'photo' => null, // Initialement vide
-                ];
-
-                
-                // Créer l'utilisateur associé
-                $user = User::create($userData);
-                // Associer l'utilisateur avec le client
-                $client->user()->associate($user);
-                $client->save();
-                // Déclencher l'événement pour l'upload de la photo
-                if ($request->hasFile('user.photo')) {
-                    $file = $request->file('user.photo');
-                    $filePath = $this->uploadService->uploadImageAndConvertToBase64($file); // obtenez le chemin du fichier
-                    event(new PhotoUploaded($filePath, $user->id));
-                }
-            }
-            
-            // Générer le code QR pour le client
-            $qrData = $client->surname . ' ' . $client->telephone;
-            $qrCodeBase64 = $this->qrCodeService->generateBase64QrCode($qrData);
-            $client->qr_code = $qrCodeBase64;
-            $client->save();
-
-            // Générer le PDF avec le QR Code
-            $pdf = $this->pdfService->generateQrCodePdf($qrCodeBase64);
-
-            // Dispatch du Job pour envoyer l'email avec le PDF
-            if ($client->user->login) {
-                SendClientEmailJob::dispatch($client->user->login, $pdf);
-                $client->user->save();
-            }
-
-            DB::commit();
+            $client = $this->clientService->storeClient($request->validated());
             return new ClientResource($client);
-
         } catch (ControllerError $e) {
-            DB::rollBack();
-            return $this->sendResponse(['error' => $e->getMessage()], StatusResponseEnum::ECHEC, 'Erreur lors de la création du client', 500);
+            return ['error' => $e->getMessage(), StatusResponseEnum::ECHEC, 'Erreur lors de la création du client', 500];
         } catch (\Throwable $e) {
-            DB::rollBack();
-            return $this->sendResponse(['error' => 'Erreur inattendue: ' . $e->getMessage()], StatusResponseEnum::ECHEC, 'Erreur lors de la création du client', 500);
+            return ['error' => 'Erreur inattendue: ' . $e->getMessage(), StatusResponseEnum::ECHEC, 'Erreur lors de la création du client', 500];
         }
     }
     public function show(string $id)

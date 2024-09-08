@@ -15,5 +15,5 @@ interface ClientService
     public function getClientWithDettes($id);
     public function getClientWithUser($id);
     public function getClientWithPhotoInBase64($telephone);
-    
+    public function storeClient(array $data);
 }

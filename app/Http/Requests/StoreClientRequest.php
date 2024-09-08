@@ -30,14 +30,14 @@ class StoreClientRequest extends FormRequest
     {
         $rules = [
             'surname' => ['required', 'string', 'max:255','unique:clients,surname'],
-            'address' => ['string', 'max:255'],
+            'adresse' => ['string', 'max:255'],
             'telephone' => ['required',new TelephoneRule()],
 
             'user' => ['sometimes','array'],
             'user.nom' => ['required_with:user','string'],
             'user.prenom' => ['required_with:user','string'],
             'user.login' => ['required_with:user','string'],
-            // 'user.password' => ['required_with:user', new CustomPasswordRule(),'confirmed'],
+            'user.password' => ['required_with:user','confirmed'],
             'user.photo' => ['required_with:user','image', 'mimes:jpeg,png,jpg'],
             // 'user.role' => ['required_with:user','array'],
             'user.role_id' => ['required_with:user.role_id','integer'],

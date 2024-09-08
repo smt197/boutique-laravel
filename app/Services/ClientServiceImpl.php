@@ -1,17 +1,137 @@
 <?php
 namespace App\Services;
 
+use App\Events\PhotoUploaded;
+use App\Exceptions\ServiceError;
+use App\Jobs\SendClientEmailJob;
+use App\Models\Role;
+use App\Models\User;
 use App\Repositories\ClientRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ClientServiceImpl implements ClientService
 {
     protected $clientRepository;
 
-    public function __construct(ClientRepository $clientRepository)
+    protected $clientService;
+    protected $uploadService;
+    protected $qrCodeService;
+    protected $emailService;
+    protected $pdfService;
+
+    public function __construct(ClientRepository $clientRepository,UploadService $uploadService, QRCodeService $qrCodeService, PdfService $pdfService)
     {
         $this->clientRepository = $clientRepository;
+        $this->uploadService = $uploadService;
+        $this->qrCodeService = $qrCodeService;
+        $this->pdfService = $pdfService;
+    }
+
+    public function storeClient(array $data)
+    {
+        DB::beginTransaction();
+    
+        try {
+            Log::info('Début de storeClient avec les données:', ['data' => $data]);
+    
+            // Extraire les données du client
+            $clientData = array_intersect_key($data, array_flip(['surname','telephone', 'adresse']));
+            
+            Log::info('Données client extraites:', ['clientData' => $clientData]);
+    
+            // Vérifier que toutes les données client requises sont présentes
+            if (!isset($clientData['surname']) || !isset($clientData['adresse']) || !isset($clientData['telephone'])) {
+                throw new ServiceError("Données client incomplètes.");
+            }
+            
+            // Créer le client
+            $client = $this->clientRepository->create($clientData);
+            Log::info('Client créé avec succès:', ['client' => $client]);
+            
+            // Vérifier si les données utilisateur sont fournies
+            if (isset($data['user'])) {
+                Log::info('Données utilisateur trouvées:', ['userData' => $data['user']]);
+    
+                // Vérifier que toutes les données utilisateur requises sont présentes
+                $requiredUserFields = ['nom', 'prenom', 'login', 'password', 'role_id'];
+                foreach ($requiredUserFields as $field) {
+                    if (!isset($data['user'][$field])) {
+                        Log::error("Champ utilisateur manquant: $field");
+                        throw new ServiceError("Champ utilisateur manquant : $field");
+                    }
+                }
+    
+                $roleId = $data['user']['role_id'];
+                $role = Role::find($roleId);
+                
+                if (!$role) {
+                    throw new ServiceError("Le rôle spécifié n'existe pas.");
+                }
+                
+                // Préparer les données utilisateur
+                $userData = [
+                    'nom' => $data['user']['nom'],
+                    'prenom' => $data['user']['prenom'],
+                    'login' => $data['user']['login'],
+                    'password' => bcrypt($data['user']['password']),
+                    'role_id' => $role->id,
+                    'photo' => null,
+                ];
+                
+                Log::info('Données utilisateur préparées:', ['userData' => $userData]);
+    
+                // Créer l'utilisateur associé
+                $user = User::create($userData);
+                Log::info('Utilisateur créé avec succès:', ['user' => $user]);
+                
+                // Associer l'utilisateur au client
+                $client->user()->associate($user);
+                $client->save();
+    
+                // Déclencher l'événement de téléchargement de photo
+                if (isset($data['user']['photo'])) {
+                    $file = $data['user']['photo'];
+                    $filePath = $this->uploadService->uploadImageAndConvertToBase64($file);
+                    event(new PhotoUploaded($filePath, $user->id));
+                    Log::info('Photo uploadée et événement déclenché');
+                }
+            } else {
+                Log::info('Aucune donnée utilisateur fournie');
+            }
+            
+            // Générer le code QR pour le client
+            $qrData = $client->surname . ' ' . $client->telephone;
+            $qrCodeBase64 = $this->qrCodeService->generateBase64QrCode($qrData);
+            $client->qr_code = $qrCodeBase64;
+            $client->save();
+            Log::info('Code QR généré et sauvegardé');
+    
+            // Générer le PDF avec le code QR
+            $pdf = $this->pdfService->generateQrCodePdf($qrCodeBase64);
+            Log::info('PDF généré');
+    
+            // Dispatcher le Job pour envoyer l'email avec le PDF
+            if ($client->user && $client->user->login) {
+                SendClientEmailJob::dispatch($client->user->login, $pdf);
+                Log::info('Job d\'envoi d\'email dispatché');
+            }
+    
+            DB::commit();
+            Log::info('Transaction commise avec succès');
+            return $client;
+    
+        } catch (ServiceError $e) {
+            DB::rollBack();
+            Log::error('ServiceError attrapée:', ['error' => $e->getMessage()]);
+            throw $e;
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Erreur inattendue:', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            throw new ServiceError('Erreur inattendue: ' . $e->getMessage());
+        }
     }
 
     public function getAllClients(Request $request)

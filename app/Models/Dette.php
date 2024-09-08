@@ -9,17 +9,39 @@ class Dette extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['montantTotal', 'montantVerser', 'montantRestant', 'client_id'];
+    protected $fillable = ['montantTotal', 'montantRestant', 'client_id'];
 
-    protected $hidden = ['updated_at'];
+    protected $hidden = ['updated_at', 'created_at'];
+
+    protected $appends = ['montantVerse'];
 
     public function client()
     {
         return $this->belongsTo(Client::class);
     }
 
+    public function paiements()
+    {
+        return $this->hasMany(Paiement::class);
+    }
+
     public function articles()
     {
-        return $this->belongsToMany(Article::class, 'article_dette')->withPivot('qteVente', 'prixVente');
+        return $this->belongsToMany(Article::class, 'article_dette')
+                    ->withPivot('qteVente', 'prixVente');
+    }
+
+    /**
+     * Accesseur pour l'attribut `montantVerse`, qui n'est pas stocké en base de données.
+     */
+    public function getMontantVerseAttribute()
+    {
+        // Retourner la somme des paiements comme montantVersé
+        return $this->paiements()->sum('montant');
+    }
+
+    public function getMontantRestantAttribute()
+    {
+        return $this->montantTotal - $this->montantVerse;
     }
 }

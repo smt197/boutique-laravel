@@ -13,16 +13,11 @@ class Article extends Model
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    public function dettes()
-    {
-        return $this->belongsToMany(Dette::class, 'article_dette')->withPivot('qteVente', 'prixVente');
-    }
-
     /**
-     * Scope a query to filter clients by telephone.
+     * Scope a query to filter articles by libelle.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $telephone
+     * @param string $libelle
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public static function WhereLibelle($libelle)

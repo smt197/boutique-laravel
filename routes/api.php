@@ -4,6 +4,7 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\DetteController;
 use App\Http\Controllers\UserController;
 
 
@@ -15,6 +16,8 @@ Route::get('/test-email', function () {
     Mail::to('serignembayet@gmail.com')->send(new QRCodeMail($qrCodeBase64));
     return 'Email sent!';
 });
+
+Route::post('/v1/dettes', [DetteController::class, 'store']);
 
 Route::prefix('v1')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
