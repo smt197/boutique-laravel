@@ -15,7 +15,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 use App\Enums\StatusResponseEnum;
 use Exception;
 use App\Http\Requests\UpdateStockRequest;
-use App\Exeptions\ControllerError;
+use App\Exceptions\ControllerError;
 
 
 class ArticleController extends Controller

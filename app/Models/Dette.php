@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Observers\DetteObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -43,5 +44,11 @@ class Dette extends Model
     public function getMontantRestantAttribute()
     {
         return $this->montantTotal - $this->montantVerse;
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::observe(DetteObserver::class);
     }
 }

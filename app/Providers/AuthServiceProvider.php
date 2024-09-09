@@ -6,7 +6,9 @@ use App\Models\User;
 use App\Policies\ArticlePolicy;
 use App\Policies\UserPolicy;
 use App\Models\Client;
+use App\Models\Dette;
 use App\Policies\ClientPolicy;
+use App\Policies\DettePolicy;
 
 
 // use Illuminate\Support\Facades\Gate;
@@ -25,7 +27,8 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         Article::class => ArticlePolicy::class,
         User::class => UserPolicy::class,
-        Client::class => ClientPolicy::class
+        Client::class => ClientPolicy::class,
+        Dette::class => DettePolicy::class,
 
 
 

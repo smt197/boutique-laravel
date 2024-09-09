@@ -42,6 +42,7 @@ Route::middleware(['auth:api', 'check.auth'])->prefix('v1')->group(function () {
 
     Route::apiResource('/users', UserController::class)->only(['index', 'store', 'show']);
 
+    Route::post('/dettes', [DetteController::class, 'store']);
 
 
 

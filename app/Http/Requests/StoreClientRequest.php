@@ -49,7 +49,7 @@ class StoreClientRequest extends FormRequest
     function messages()
     {
         return [
-            'surname.required' => "Le surnom est obligatoire.",
+            'surname.required' => "Le surnom est obligatoire.", 
         ];
     }
 

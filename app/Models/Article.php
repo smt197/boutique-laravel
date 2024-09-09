@@ -20,6 +20,11 @@ class Article extends Model
      * @param string $libelle
      * @return \Illuminate\Database\Eloquent\Builder
      */
+    public function dettes()
+    {
+        return $this->belongsToMany(Dette::class, 'article_dette')
+                    ->withPivot('qteVente', 'prixVente');
+    }
     public static function WhereLibelle($libelle)
     {
         return self::where('libelle', $libelle);

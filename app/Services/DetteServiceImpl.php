@@ -1,45 +1,35 @@
 <?php
 namespace App\Services;
 
-use App\Models\Dette;
-use App\Models\Paiement;
+use App\Repositories\DetteRepository;
+use App\Repositories\PaiementRepository;
 use Illuminate\Support\Facades\DB;
 
 class DetteServiceImpl implements DetteService
 {
+    protected $detteRepository;
+    protected $paiementRepository;
+
+    // Injection des repositories via le constructeur
+    public function __construct(DetteRepository $detteRepository, PaiementRepository $paiementRepository)
+    {
+        $this->detteRepository = $detteRepository;
+        $this->paiementRepository = $paiementRepository;
+    }
+
     public function store(array $data)
     {
         DB::beginTransaction();
 
         try {
-            // Créer une nouvelle dette
-            $dette = new Dette();
-            $dette->montantTotal = $data['montant'];
-            $dette->client_id = $data['clientId'];
-            $dette->montantRestant = $data['montant']; // Initialement, montantRestant = montantTotal
-            $dette->save();
+            // Créer une nouvelle dette via le repository
+            $detteData = [
+                'montantTotal' => $data['montant'],
+                'client_id' => $data['clientId'],
+                'montantRestant' => $data['montant'], // Initialement, montantRestant = montantTotal
+            ];
 
-            // Ajouter les articles
-            foreach ($data['articles'] as $article) {
-                // On suppose que vous avez un pivot 'article_dette' pour gérer cette relation
-                $dette->articles()->attach($article['articleId'], [
-                    'qteVente' => $article['qteVente'],
-                    'prixVente' => $article['prixVente']
-                ]);
-            }
-
-            // Ajouter le paiement si présent
-            if (isset($data['paiement']['montant'])) {
-                $paiement = new Paiement();
-                $paiement->montant = $data['paiement']['montant'];
-                $paiement->dette_id = $dette->id;
-                $paiement->save();
-
-                // Recalculer le montantRestant après le paiement
-                $dette->montantRestant = $dette->montantTotal - $dette->montantVerse;
-                $dette->save(); // Sauvegarder la mise à jour de montantRestant
-
-            }
+            $dette = $this->detteRepository->create($detteData);
 
             DB::commit();
 

@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Repositories\ArticleRepository;
 use App\Models\Article;
-use App\Exeptions\ServiceError;
+use App\Exceptions\ServiceError;
 
 class ArticleServiceImpl implements ArticleService
 {
