@@ -12,7 +12,7 @@ class Dette extends Model
 
     protected $fillable = ['montantTotal', 'montantRestant', 'client_id'];
 
-    protected $hidden = ['updated_at', 'created_at'];
+    protected $hidden = ['updated_at', 'created_at','client_id'];
 
     protected $appends = ['montantVerse'];
 

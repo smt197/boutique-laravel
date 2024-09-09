@@ -113,7 +113,7 @@ class ClientController extends Controller
                 return $this->sendResponse(null, StatusResponseEnum::ECHEC, 'Client non trouvé', 404);
             }
 
-            return $this->sendResponse($client->dettes, StatusResponseEnum::SUCCESS, 'Dettes récupérées avec succès', 200);
+            return $this->sendResponse($client, StatusResponseEnum::SUCCESS, 'Dettes récupérées avec succès', 200);
         } catch (\Throwable $e) {
             return $this->sendResponse(['error' => 'Erreur lors de la récupération des dettes du client: ' . $e->getMessage()], StatusResponseEnum::ECHEC, 'Erreur lors de la récupération des dettes', 500);
         }

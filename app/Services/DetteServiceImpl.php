@@ -17,6 +17,47 @@ class DetteServiceImpl implements DetteService
         $this->paiementRepository = $paiementRepository;
     }
 
+    public function getAll(array $filters, array $includes)
+    {
+        return $this->detteRepository->getAll($filters, $includes);
+    }
+
+    public function show($id){
+        // Récupérer la dette via le repository
+        $dette = $this->detteRepository->findById($id);
+
+        if (!$dette) {
+            return response()->json(['error' => 'Dette introuvable'], 404);
+        }
+        return $dette;
+    }
+
+    public function getDetteWithArticles($id){
+
+        $dette = $this->detteRepository->findById($id);
+
+        if (!$dette) {
+            return response()->json(['error' => 'Dette introuvable'], 404);
+        }
+
+        // Charger les articles associés à la dette
+        $dette->load('articles');
+
+        return $dette;
+    }
+    public function getDetteWithPaiements($id){
+        $dette = $this->detteRepository->findById($id);
+
+        if (!$dette) {
+            return response()->json(['error' => 'Dette introuvable'], 404);
+        }
+
+        // Charger les paiements associés à la dette
+        $dette->load('paiements');
+
+        return $dette;
+    }
+
     public function store(array $data)
     {
         DB::beginTransaction();

@@ -24,7 +24,7 @@ class StoreArticleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'libelle' => 'required|string|max:255',
+            'libelle' => 'required|string|unique:articles,libelle|max:255',
             'reference' => 'required|string|unique:articles,reference|max:255',
             'prix' => 'required|numeric|min:0',
             'quantite' => 'required|integer|min:0',
@@ -36,6 +36,8 @@ class StoreArticleRequest extends FormRequest
         return [
             'libelle.required' => 'Le libellé est obligatoire.',
             'libelle.string' => 'Le libellé doit contenir uniquement des lettres.',
+            'libelle.unique' => 'Ce libellé est déjà utilisé.',
+            'reference.unique' => 'Cette référence est déjà utilisé.',
             'prix.required' => 'Le prix est obligatoire.',
             'prix.numeric' => 'Le prix doit être un nombre valide.',
             'quantite.required' => 'La quantité en stock est obligatoire.',

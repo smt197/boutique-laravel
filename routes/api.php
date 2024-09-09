@@ -43,6 +43,12 @@ Route::middleware(['auth:api', 'check.auth'])->prefix('v1')->group(function () {
     Route::apiResource('/users', UserController::class)->only(['index', 'store', 'show']);
 
     Route::post('/dettes', [DetteController::class, 'store']);
+    Route::get('/dettes', [DetteController::class,'index']);
+    Route::get('/dettes/{id}', [DetteController::class,'show']);
+    Route::get('/dettes/{id}/articles', [DetteController::class,'getDetteWithArticles']);
+    Route::get('/dettes/{id}/paiements', [DetteController::class,'getDetteWithPaiements']);
+    Route::post('/dettes/{id}/paiements', [DetteController::class, 'StorePaiement']);
+    
 
 
 
