@@ -14,8 +14,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->job(new SendSmsToClientsWithDebt(app()->make('App\Services\SmsService')))->veryMinute();;
-        // $schedule->job(new SendSmsToClientsWithDebt(app()->make('App\Services\SmsService')))->everyTenMinutes();
+        // $schedule->job(new SendSmsToClientsWithDebt(app()->make('App\Services\SmsService')))->veryMinute();;
+        $schedule->job(new SendSmsToClientsWithDebt(app()->make('App\Services\SmsService')))->everyMinute();
 
 
     }
