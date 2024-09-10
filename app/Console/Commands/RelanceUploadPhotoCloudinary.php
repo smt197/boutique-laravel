@@ -16,14 +16,23 @@ class RelanceUploadPhotoCloudinary extends Command
     public function handle()
     {
         // Récupérer les utilisateurs dont la photo est stockée localement (pas sur Cloudinary)
-        $users = User::where('is_photo_on_cloudinary', false)
+        $users = User::where('is_on_cloudinary', false)
             ->whereNotNull('photo') // Vérifier que la colonne photo a bien une valeur
             ->get();
+
+            $this->info("Found " . $users->count() . " users to process.");
+
+            if ($users->isEmpty()) {
+                $this->info("No users found with photos to upload.");
+                return;
+            }
 
         foreach ($users as $user) {
             try {
                 // Chemin relatif vers la photo dans le stockage local
-                $localPhotoPath = storage_path('app/public/' . $user->photo);
+                $localPhotoPath = storage_path($user->photo);
+
+                $this->info("Attempting to process photo for user {$user->nom} at path: {$localPhotoPath}");
 
                 if (!file_exists($localPhotoPath)) {
                     $this->error("La photo locale de l'utilisateur {$user->nom} est introuvable.");
@@ -35,7 +44,7 @@ class RelanceUploadPhotoCloudinary extends Command
 
                 // Mettre à jour l'URL Cloudinary et changer le statut
                 $user->photo = $uploadedFileUrl;
-                $user->is_photo_on_cloudinary = true;
+                $user->is_on_cloudinary = true;
                 $user->save();
 
                 $this->info("Photo de l'utilisateur {$user->nom} uploadée avec succès sur Cloudinary.");

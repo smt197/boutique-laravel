@@ -17,6 +17,7 @@ use App\Repositories\DetteRepositoryImpl;
 use App\Services\DetteServiceImpl;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\PaiementRepositoryImpl;
+use App\Services\SmsService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,7 +37,9 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(PaiementRepository::class, PaiementRepositoryImpl::class);
 
-
+        $this->app->singleton(SmsService::class, function ($app) {
+            return new SmsService();
+        });
     }
 
     /**

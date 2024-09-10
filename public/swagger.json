@@ -11,7 +11,230 @@
             "description": "Serveur Local"
         }
     ],
+    
     "paths": {
+        "/api/v1/dettes": {
+        "post": {
+            "summary": "Créer une nouvelle dette",
+            "description": "Crée une nouvelle dette pour un client, avec possibilité d'ajouter des articles et un paiement initial.",
+            "tags": ["Dettes"],
+            "requestBody": {
+            "required": true,
+            "content": {
+                "application/json": {
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                    "montant": {
+                        "type": "number",
+                        "description": "Le montant total de la dette",
+                        "example": 500.00
+                    },
+                    "clientId": {
+                        "type": "integer",
+                        "description": "L'ID du client associé à la dette",
+                        "example": 1
+                    },
+                    "articles": {
+                        "type": "array",
+                        "description": "Liste des articles associés à la dette",
+                        "items": {
+                        "type": "object",
+                        "properties": {
+                            "articleId": {
+                            "type": "integer",
+                            "description": "L'ID de l'article",
+                            "example": 2
+                            },
+                            "qteVente": {
+                            "type": "integer",
+                            "description": "Quantité vendue de l'article",
+                            "example": 3
+                            },
+                            "prixVente": {
+                            "type": "number",
+                            "description": "Prix de vente de l'article",
+                            "example": 100.00
+                            }
+                        }
+                        }
+                    },
+                    "paiement": {
+                        "type": "object",
+                        "description": "Détails du paiement initial (facultatif)",
+                        "properties": {
+                        "montant": {
+                            "type": "number",
+                            "description": "Montant du paiement",
+                            "example": 150.00
+                        }
+                        }
+                    }
+                    },
+                    "required": ["montant", "clientId", "articles"]
+                }
+                }
+            }
+            },
+            "responses": {
+            "201": {
+                "description": "Dette créée avec succès.",
+                "content": {
+                "application/json": {
+                    "schema": {
+                    "$ref": "#/components/schemas/Dettes"
+                    }
+                }
+                }
+            },
+            "400": {
+                "description": "Erreur de validation."
+            },
+            "404": {
+                "description": "Client ou article non trouvé."
+            }
+            }
+        }
+        }
+,
+        "/api/v1/dettes/{id}": {
+            "get": {
+                "summary": "Afficher une dette",
+                "description": "Récupère les détails d'une dette spécifique.",
+                "tags": ["Dettes"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "ID de la dette"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détails de la dette récupérés avec succès.",
+                        "content": {
+                            "application/json": {
+                                "$ref": "#/components/schemas/Dettes"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Dette non trouvée"
+                    }
+                }
+            }
+        },
+        "/api/v1/dettes/{id}/articles": {
+            "get": {
+                "summary": "Récupérer les articles d'une dette",
+                "description": "Récupère les articles associés à une dette spécifique.",
+                "tags": ["Dettes", "Articles"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "ID de la dette"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Articles associés à la dette récupérés avec succès.",
+                        "content": {
+                            "application/json": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Article"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Dette ou articles non trouvés"
+                    }
+                }
+            }
+        },
+        "/api/v1/dettes/{id}/paiements": {
+            "get": {
+                "summary": "Récupérer les paiements d'une dette",
+                "description": "Récupère les paiements associés à une dette spécifique.",
+                "tags": ["Dettes", "Paiements"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "ID de la dette"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paiements associés à la dette récupérés avec succès.",
+                        "content": {
+                            "application/json": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Paiement"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Dette ou paiements non trouvés"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Créer un paiement pour une dette",
+                "description": "Crée un paiement pour une dette spécifique.",
+                "tags": ["Dettes", "Paiements"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "ID de la dette"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Paiement"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Paiement créé avec succès.",
+                        "content": {
+                            "application/json": {
+                                "$ref": "#/components/schemas/Paiement"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Dette non trouvée"
+                    }
+                }
+            }
+        },
         "/api/v1/login": {
             "post": {
                 "summary": "Connexion utilisateur",
@@ -26,11 +249,11 @@
                                 "properties": {
                                     "login": {
                                         "type": "string",
-                                        "example": "user@example.com"
+                                        "example": "serigneBoutiquier@gmai.com"
                                     },
                                     "password": {
                                         "type": "string",
-                                        "example": "Password@123"
+                                        "example": "Serigne@123"
                                     }
                                 },
                                 "required": ["email", "password"]
@@ -505,6 +728,96 @@
             }
         },
         "/api/v1/clients": {
+  "post": {
+    "summary": "Créer un nouveau client avec un utilisateur associé",
+    "description": "Crée un nouveau client et, facultativement, un compte utilisateur associé.",
+    "tags": ["Clients"],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "surname": {
+                "type": "string",
+                "description": "Le nom du client",
+                "example": "Doe"
+              },
+              "telephone": {
+                "type": "string",
+                "description": "Le numéro de téléphone du client",
+                "example": "123456789"
+              },
+              "adresse": {
+                "type": "string",
+                "description": "L'adresse du client",
+                "example": "123 Rue de Paris"
+              },
+              "user": {
+                "type": "object",
+                "description": "Informations sur l'utilisateur associé (facultatif)",
+                "properties": {
+                  "nom": {
+                    "type": "string",
+                    "description": "Le nom de l'utilisateur",
+                    "example": "John"
+                  },
+                  "prenom": {
+                    "type": "string",
+                    "description": "Le prénom de l'utilisateur",
+                    "example": "Doe"
+                  },
+                  "login": {
+                    "type": "string",
+                    "description": "Le login de l'utilisateur",
+                    "example": "johndoe"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Le mot de passe de l'utilisateur",
+                    "example": "password123"
+                  },
+                  "role_id": {
+                    "type": "integer",
+                    "description": "L'ID du rôle attribué à l'utilisateur",
+                    "example": 2
+                  },
+                  "photo": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Une image de profil de l'utilisateur (facultatif)"
+                  }
+                },
+                "required": ["nom", "prenom", "login", "password", "role_id"]
+              }
+            },
+            "required": ["surname", "telephone", "adresse"]
+          }
+        }
+      }
+    },
+    "responses": {
+      "201": {
+        "description": "Client et utilisateur créés avec succès.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Client"
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Erreur de validation."
+      },
+      "404": {
+        "description": "Rôle non trouvé."
+      }
+    }
+  }
+},
+        "/api/v1/clientss": {
             "get": {
                 "summary": "Liste des clients",
                 "description": "Récupère la liste de tous les clients.",
@@ -905,13 +1218,13 @@
                     "client_id": {
                         "type": "integer"
                     },
-                    "montant": {
+                    "montantTotal": {
                         "type": "number",
                         "format": "float"
                     },
-                    "date": {
-                        "type": "string",
-                        "format": "date"
+                    "montantRestant": {
+                        "type": "number",
+                        "format": "float"
                     }
                 }
             },
@@ -938,13 +1251,30 @@
                         "type": "string"
                     },
                     "photo": {
-                        "type": "string"
+                        "type": "image"
                     },
                     "role_id": {
                         "type": "integer"
                     }
                 }
+            },
+            "Paiement": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "dette_id": {
+                        "type": "integer"
+                    },
+                    "montant": {
+                        "type": "number",
+                        "format": "float"
+                    }
+                    
+                }
             }
+
         },
         "securitySchemes": {
             "BearerAuth": {
