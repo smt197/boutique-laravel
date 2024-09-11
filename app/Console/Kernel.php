@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         // $schedule->job(new SendSmsToClientsWithDebt(app()->make('App\Services\SmsService')))->veryMinute();;
         $schedule->job(new SendSmsToClientsWithDebt(app()->make('App\Services\SmsService')))->everyMinute();
+        $schedule->command('dettes:archive')->daily();
 
 
     }
@@ -26,6 +27,7 @@ class Kernel extends ConsoleKernel
     protected function commands(): void
     {
         $this->load(__DIR__.'/Commands');
+        \App\Console\Commands\ArchivePaidDebts::class;
         require base_path('routes/console.php');
     }
 }

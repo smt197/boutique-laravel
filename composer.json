@@ -14,6 +14,7 @@
         "laravel/passport": "^12.3",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
+        "mongodb/mongodb": "^1.11",
         "spatie/laravel-query-builder": "^5.7",
         "twilio/sdk": "^8.3"
     },

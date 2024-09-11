@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DetteController;
+use App\Http\Controllers\MongoTestController;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\UserController;
 
@@ -20,6 +21,8 @@ Route::get('/test-email', function () {
 
 Route::post('/v1/dettes', [DetteController::class, 'store']);
 Route::post('/v1/send-sms-to-clients', [SmsController::class, 'sendSms']);
+
+Route::get('/v1/test-mongo', [MongoTestController::class, 'testConnection']);
 
 Route::prefix('v1')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);

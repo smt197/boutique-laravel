@@ -170,6 +170,8 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\AuthCustomServiceProvider::class,
         App\Providers\UploadServiceProvider::class,
+        App\Providers\MongoServiceProvider::class,
+
     ])->toArray(),
 
     /*
