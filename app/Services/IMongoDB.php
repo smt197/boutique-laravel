@@ -6,5 +6,5 @@ use MongoDB\Client;
 
 interface IMongoDB
 {
-    public function getClient():Client;
+    public function getClient();
 }

@@ -7,7 +7,7 @@ use PHPUnit\Event\TestSuite\Loaded;
 
 class DetteArchive
 {
-    protected $mongoClient;
+    /*protected $mongoClient;
 
     public function __construct(IMongoDB $mongoConnection)
     {
@@ -19,9 +19,11 @@ class DetteArchive
     {
         // Si la dette est totalement payée
         if ($dette->montantRestant == 0) {
+            
             // Sélectionner la base de données et la collection
             $database = $this->mongoClient->selectDatabase(env('MONGO_DB_DATABASE'));
             $collection = $database->selectCollection('archive_db');
+
 
             // Archiver la dette dans MongoDB
             $collection->insertOne([
@@ -36,5 +38,5 @@ class DetteArchive
             // Supprimer la dette de PostgreSQL si nécessaire
             $dette->delete();
         }
-    }
+    }*/
 }

@@ -11,7 +11,7 @@ class MongoServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->singleton(IMongoDB::class, IMongoImpl::class);
+        // $this->app->singleton(IMongoDB::class, IMongoImpl::class);
 
         // $this->app->singleton(DetteArchive::class, function ($app) {
         //     return new DetteArchive($app->make(IMongoDB::class));

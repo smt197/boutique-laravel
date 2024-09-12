@@ -18,6 +18,7 @@ use App\Services\DetteServiceImpl;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\PaiementRepositoryImpl;
 use App\Services\IMongoDB;
+use App\Services\IMongoImpl;
 use App\Services\SmsService;
 
 class AppServiceProvider extends ServiceProvider
@@ -42,9 +43,14 @@ class AppServiceProvider extends ServiceProvider
             return new SmsService();
         });
 
-        $this->app->singleton(IMongoDB::class, function ($app) {
+        /*$this->app->singleton(IMongoDB::class, function ($app) {
             return new IMongoDB();
+        });*/
+
+        $this->app->singleton('MongoClient', function () {
+            return new IMongoImpl();
         });
+
     }
 
     /**
