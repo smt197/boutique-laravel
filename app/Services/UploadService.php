@@ -12,7 +12,11 @@ class UploadService
 
     public function __construct()
     {
-        $this->cloudinary = new Cloudinary();
+        $this->cloudinary = new Cloudinary([
+            'cloud_name' => 'da4sfyuwq',
+            'api_key' => '441252265452967',
+            'api_secret' => 'pdEw8PXGstpUy8FPoeJ9oSqwNUk',
+        ]);
     }
 
     /**

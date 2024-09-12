@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Twilio\Rest\Client;
 
-class SmsService
+class SmsService implements SmsProviderInterface
 {
     protected $twilioClient;
     protected $twilioNumber;
@@ -12,14 +12,14 @@ class SmsService
     public function __construct()
     {
         $this->twilioClient = new Client(
-            env('TWILIO_SID'),
-            env('TWILIO_AUTH_TOKEN')
+            'ACa9c3186f84f5089b3b471ecc2bbf4e5f',
+            '6ba0dfc598bdad3556c0ad7e6c821146'
         );
 
-        $this->twilioNumber = env('TWILIO_PHONE_NUMBER');
+        $this->twilioNumber = '+12138934162';
     }
 
-    public function sendSms($to, $message)
+    public function sendSms($to, $message): void
     {
         try {
             // Formater le numéro avant d'envoyer le SMS

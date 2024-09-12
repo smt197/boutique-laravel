@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Client;
+use App\Services\SmsProviderInterface;
 use App\Services\SmsService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,7 +17,7 @@ class SendSmsToClientsWithDebt implements ShouldQueue
 
     protected $smsService;
 
-    public function __construct(SmsService $smsService)
+    public function __construct(SmsProviderInterface $smsService)
     {
         $this->smsService = $smsService;
     }
@@ -25,10 +26,13 @@ class SendSmsToClientsWithDebt implements ShouldQueue
     {
         $clients = Client::whereHas('dettes', function ($query) {
             $query->where('montantRestant', '>', 0);
-        })->get();
+        })->with('dettes')->get();
 
         foreach ($clients as $client) {
-            $this->smsService->sendSms($client->telephone, 'Vous avez une dette non réglée. Veuillez régulariser votre situation.');
+            $totalDebt = $client->dettes->sum('montantRestant');
+            $message = "Vous avez une dette de $totalDebt non réglée. Veuillez régulariser votre situation.";
+
+            $this->smsService->sendSms($client->telephone, $message);
         }
     }
 }

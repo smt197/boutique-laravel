@@ -24,7 +24,7 @@ class ArchivePaidDebts extends Command
         $paidDebts = Dette::where('montantRestant', 0)->get();
 
         foreach ($paidDebts as $dette) {
-            //$this->archiveDetteService->archivePaidDebt($dette);
+            // $this->archiveDetteService->archivePaidDebt($dette);
         }
 
         $this->info('Les dettes totalement payées ont été archivées.');

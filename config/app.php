@@ -168,9 +168,10 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\TelescopeServiceProvider::class,
         App\Providers\AuthCustomServiceProvider::class,
         App\Providers\UploadServiceProvider::class,
-        App\Providers\MongoServiceProvider::class,
+        // App\Providers\MongoServiceProvider::class,
 
     ])->toArray(),
 

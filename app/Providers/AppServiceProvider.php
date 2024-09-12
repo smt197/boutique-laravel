@@ -19,6 +19,8 @@ use Illuminate\Support\ServiceProvider;
 use App\Repositories\PaiementRepositoryImpl;
 use App\Services\IMongoDB;
 use App\Services\IMongoImpl;
+use App\Services\InfoBipSmsService;
+use App\Services\SmsProviderInterface;
 use App\Services\SmsService;
 
 class AppServiceProvider extends ServiceProvider
@@ -39,7 +41,12 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(PaiementRepository::class, PaiementRepositoryImpl::class);
 
-        $this->app->singleton(SmsService::class, function ($app) {
+
+        $this->app->singleton(SmsProviderInterface::class, function ($app) {
+            $service = env('SMS_SERVICE','twilio');
+            if ($service === 'infobip') {
+                return new InfoBipSmsService();
+            }
             return new SmsService();
         });
 
