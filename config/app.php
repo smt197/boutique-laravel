@@ -188,6 +188,8 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        'FirebaseClient' => App\Facades\FirebaseClientFacade::class,
+        'MongoClient' => App\Facades\MongoClientFacade::class,
     ])->toArray(),
 
 ];

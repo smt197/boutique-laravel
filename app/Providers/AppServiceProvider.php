@@ -17,6 +17,7 @@ use App\Repositories\DetteRepositoryImpl;
 use App\Services\DetteServiceImpl;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\PaiementRepositoryImpl;
+use App\Services\FirebaseService;
 use App\Services\IMongoDB;
 use App\Services\IMongoImpl;
 use App\Services\InfoBipSmsService;
@@ -56,6 +57,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton('MongoClient', function () {
             return new IMongoImpl();
+        });
+
+        $this->app->singleton('FirebaseClient', function () {
+            return new FirebaseService();
         });
 
     }

@@ -18,7 +18,7 @@ Route::post('/v1/dettes', [DetteController::class, 'store']);
 Route::post('/v1/send-sms-to-clients', [SmsController::class, 'sendSms']);
 
 Route::get('v1/env', function () {
-    return env('SMS_SERVICE');
+    return env('DB_ARCHIVE');
 });
 
 Route::prefix('v1')->group(function () {

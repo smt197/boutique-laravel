@@ -12,6 +12,7 @@ use App\Models\Dette;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
+
 class ArchiveDetteWithMongo implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

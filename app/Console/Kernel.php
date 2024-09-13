@@ -2,7 +2,8 @@
 
 namespace App\Console;
 
-use App\Jobs\ArchiveDetteWithMongo;
+use App\Jobs\ArchiveDette;
+// use App\Jobs\ArchiveDetteWithMongo;
 use App\Jobs\SendSmsToClientsWithDebt;
 use App\Services\SmsProviderInterface;
 use Illuminate\Console\Scheduling\Schedule;
@@ -15,15 +16,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
-        // $schedule->job(new SendSmsToClientsWithDebt(app()->make('App\Services\SmsService')))->veryMinute();;
         // Récupérer l'implémentation correcte du service SMS en utilisant l'interface
-        $smsService = app()->make(SmsProviderInterface::class);
-
+        //$smsService = app()->make(SmsProviderInterface::class);
         // Planifier le job pour envoyer les SMS
-        $schedule->job(new SendSmsToClientsWithDebt($smsService))->everyMinute();
+        //$schedule->job(new SendSmsToClientsWithDebt($smsService))->everyMinute();
         //$schedule->command('dettes:archive')->daily();
-        $schedule->job(new ArchiveDetteWithMongo)->everyFiveSeconds();
+        $schedule->job(new ArchiveDette())->everyMinute();
 
 
     }

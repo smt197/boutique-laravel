@@ -39,6 +39,9 @@ return [
 
     'sms' => [
         'provider' => env('SMS_SERVICE','twilio') 
-    ]
+    ],
+    'choice' => [
+        'archive' => env('DB_ARCHIVE', 'mongodb')
+    ],
 
 ];
