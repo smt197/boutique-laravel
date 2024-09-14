@@ -44,4 +44,8 @@ return [
         'archive' => env('DB_ARCHIVE', 'mongodb')
     ],
 
+    'archive' => [
+        'type' => env('ARCHIVE_TYPE', 'mongodb'),
+    ],
+
 ];

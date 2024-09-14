@@ -6,19 +6,18 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DetteController;
 use App\Http\Controllers\MongoTestController;
+use App\Http\Controllers\RecupArchiveController;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\UserController;
 
-
-use Illuminate\Support\Facades\Mail;
-use App\Mail\QRCodeMail;
+Route::get('/v1/dettes/archive', [RecupArchiveController::class, 'getAllArchivedDebts']);
 
 
 Route::post('/v1/dettes', [DetteController::class, 'store']);
 Route::post('/v1/send-sms-to-clients', [SmsController::class, 'sendSms']);
 
 Route::get('v1/env', function () {
-    return env('DB_ARCHIVE');
+    return env('ARCHIVE_TYPE');
 });
 
 Route::prefix('v1')->group(function () {
@@ -50,7 +49,14 @@ Route::middleware(['auth:api', 'check.auth'])->prefix('v1')->group(function () {
     Route::get('/dettes/{id}/articles', [DetteController::class,'getDetteWithArticles']);
     Route::get('/dettes/{id}/paiements', [DetteController::class,'getDetteWithPaiements']);
     Route::post('/dettes/{id}/paiements', [DetteController::class, 'StorePaiement']);
+
+
     
+    Route::get('/archive/clients/{id}/dettes', [RecupArchiveController::class,'getArchivedDebtsByClient']);
+    Route::get('/archive/dettes/{Id}', [RecupArchiveController::class,'getArchivedDebtById']);
+
+    Route::post('/restaure/dette/{debtId}', [RecupArchiveController::class,'restore']);
+
 
 
 

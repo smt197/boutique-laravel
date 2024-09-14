@@ -12,7 +12,7 @@ class DettePolicy
      */
     public function viewAny(User $user)
     {
-        return $user->role->nomRole === 'BOUTIQUIER' ;
+        return $user->role->nomRole === 'BOUTIQUIER' || $user->role->nomRole === 'ADMIN';
     }
 
     /**
@@ -28,7 +28,7 @@ class DettePolicy
      */
     public function create(User $user)
     {
-        return $user->role->nomRole === 'BOUTIQUIER';
+        return $user->role->nomRole === 'BOUTIQUIER' ;
     }
 
 }

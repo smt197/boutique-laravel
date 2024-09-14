@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\ModelFirebase;
+use App\Models\ModelMongo;
 use App\Repositories\ArticleRepository;
 use App\Repositories\ArticleRepositoryImpl;
 use App\Repositories\ClientRepository;
@@ -14,9 +16,12 @@ use App\Services\ClientService;
 use App\Services\ClientServiceImpl;
 use App\Services\DetteService;
 use App\Repositories\DetteRepositoryImpl;
+use App\Repositories\FirebaseArchiveRepository;
+use App\Repositories\MongoArchiveRepository;
 use App\Services\DetteServiceImpl;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\PaiementRepositoryImpl;
+use App\Services\Dette\ArchiveRepositoryInterface;
 use App\Services\FirebaseService;
 use App\Services\IMongoDB;
 use App\Services\IMongoImpl;
@@ -51,9 +56,17 @@ class AppServiceProvider extends ServiceProvider
             return new SmsService();
         });
 
-        /*$this->app->singleton(IMongoDB::class, function ($app) {
-            return new IMongoDB();
-        });*/
+        $this->app->bind(ArchiveRepositoryInterface::class, function ($app) {
+            $archiveType = config('services.archive.type');
+            
+            if ($archiveType === 'mongodb') {
+                return new MongoArchiveRepository(new ModelMongo());
+            } elseif ($archiveType === 'firebase') {
+                return new FirebaseArchiveRepository(new ModelFirebase());
+            }
+            
+            throw new \Exception("Invalid archive type specified");
+        });
 
         $this->app->singleton('MongoClient', function () {
             return new IMongoImpl();

@@ -20,7 +20,7 @@ class Kernel extends ConsoleKernel
         //$smsService = app()->make(SmsProviderInterface::class);
         // Planifier le job pour envoyer les SMS
         //$schedule->job(new SendSmsToClientsWithDebt($smsService))->everyMinute();
-        //$schedule->command('dettes:archive')->daily();
+        $schedule->command('dettes:archive')->daily();
         $schedule->job(new ArchiveDette())->everyMinute();
 
 

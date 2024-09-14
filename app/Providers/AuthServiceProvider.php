@@ -7,7 +7,9 @@ use App\Policies\ArticlePolicy;
 use App\Policies\UserPolicy;
 use App\Models\Client;
 use App\Models\Dette;
+use App\Models\ModelFirebase;
 use App\Policies\ClientPolicy;
+use App\Policies\DetteArchivePolicy;
 use App\Policies\DettePolicy;
 
 
@@ -29,8 +31,7 @@ class AuthServiceProvider extends ServiceProvider
         User::class => UserPolicy::class,
         Client::class => ClientPolicy::class,
         Dette::class => DettePolicy::class,
-
-
+        ModelFirebase::class => DetteArchivePolicy::class,
 
     ];
 
