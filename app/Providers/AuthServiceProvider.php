@@ -11,8 +11,7 @@ use App\Models\ModelFirebase;
 use App\Policies\ClientPolicy;
 use App\Policies\DetteArchivePolicy;
 use App\Policies\DettePolicy;
-
-
+use App\Policies\NotifClientPolicy;
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -32,7 +31,6 @@ class AuthServiceProvider extends ServiceProvider
         Client::class => ClientPolicy::class,
         Dette::class => DettePolicy::class,
         ModelFirebase::class => DetteArchivePolicy::class,
-
     ];
 
     /**

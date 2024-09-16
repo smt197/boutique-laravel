@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b415e982c87b48f2d3188fe5e387d096",
+    "content-hash": "33fa685bf6d839b24eb485bc5a9157e3",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -2873,17 +2873,90 @@
             "time": "2024-08-16T23:28:25+00:00"
         },
         {
-            "name": "laravel/framework",
-            "version": "v10.48.20",
+            "name": "laravel-notification-channels/twilio",
+            "version": "3.4.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/laravel/framework.git",
-                "reference": "be2be342d4c74db6a8d2bd18469cd6d488ab9c98"
+                "url": "https://github.com/laravel-notification-channels/twilio.git",
+                "reference": "761d57bfccf7c2eccb0ca9fe0e7a66173e0e203f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/be2be342d4c74db6a8d2bd18469cd6d488ab9c98",
-                "reference": "be2be342d4c74db6a8d2bd18469cd6d488ab9c98",
+                "url": "https://api.github.com/repos/laravel-notification-channels/twilio/zipball/761d57bfccf7c2eccb0ca9fe0e7a66173e0e203f",
+                "reference": "761d57bfccf7c2eccb0ca9fe0e7a66173e0e203f",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/events": "^7.0 || ^8.0 || ^9.0 || ^10.0|^11.0",
+                "illuminate/notifications": "^7.0 || ^8.0 || ^9.0 || ^10.0|^11.0",
+                "illuminate/queue": "^7.0 || ^8.0 || ^9.0 || ^10.0|^11.0",
+                "illuminate/support": "^7.0 || ^8.0 || ^9.0 || ^10.0|^11.0",
+                "php": ">=7.2|^8.0",
+                "twilio/sdk": "~6.0|^7.16"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.3",
+                "orchestra/testbench": "^5.0 || ^6.0 || ^7.0 || ^8.0|^9.0",
+                "phpunit/phpunit": "^8.5|^9.5|^10.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "NotificationChannels\\Twilio\\TwilioProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "NotificationChannels\\Twilio\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gregorio Hernández Caso",
+                    "email": "gregoriohc@gmail.com",
+                    "homepage": "https://github.com/gregoriohc",
+                    "role": "Developer"
+                },
+                {
+                    "name": "atymic",
+                    "email": "atymicq@gmail.com",
+                    "homepage": "https://atymic.dev",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Provides Twilio notification channel for Laravel",
+            "keywords": [
+                "call",
+                "laravel",
+                "mms",
+                "notification",
+                "sms",
+                "twilio"
+            ],
+            "support": {
+                "issues": "https://github.com/laravel-notification-channels/twilio/issues",
+                "source": "https://github.com/laravel-notification-channels/twilio"
+            },
+            "time": "2024-03-14T21:53:03+00:00"
+        },
+        {
+            "name": "laravel/framework",
+            "version": "v10.48.22",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/framework.git",
+                "reference": "c4ea52bb044faef4a103d7dd81746c01b2ec860e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/c4ea52bb044faef4a103d7dd81746c01b2ec860e",
+                "reference": "c4ea52bb044faef4a103d7dd81746c01b2ec860e",
                 "shasum": ""
             },
             "require": {
@@ -3077,7 +3150,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2024-08-09T07:55:45+00:00"
+            "time": "2024-09-12T15:00:09+00:00"
         },
         {
             "name": "laravel/passport",
@@ -9534,16 +9607,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "8.3.0",
+            "version": "7.16.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "da842421814abaacb1c57eaacd7e8de19bbdbee6"
+                "reference": "02ad214b0cc9fc513bd67df251d54aed8901284f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/da842421814abaacb1c57eaacd7e8de19bbdbee6",
-                "reference": "da842421814abaacb1c57eaacd7e8de19bbdbee6",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/02ad214b0cc9fc513bd67df251d54aed8901284f",
+                "reference": "02ad214b0cc9fc513bd67df251d54aed8901284f",
                 "shasum": ""
             },
             "require": {
@@ -9581,9 +9654,9 @@
             ],
             "support": {
                 "issues": "https://github.com/twilio/twilio-php/issues",
-                "source": "https://github.com/twilio/twilio-php/tree/8.3.0"
+                "source": "https://github.com/twilio/twilio-php/tree/7.16.2"
             },
-            "time": "2024-09-05T13:01:28+00:00"
+            "time": "2024-04-01T10:34:42+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -10056,16 +10129,16 @@
         },
         {
             "name": "laravel/sail",
-            "version": "v1.31.3",
+            "version": "v1.32.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/sail.git",
-                "reference": "0a7e2891a85eba2d448a9ffc6fc5ce367e924bc1"
+                "reference": "4a7e41d280861ca7e35710cea011a07669b4003b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/sail/zipball/0a7e2891a85eba2d448a9ffc6fc5ce367e924bc1",
-                "reference": "0a7e2891a85eba2d448a9ffc6fc5ce367e924bc1",
+                "url": "https://api.github.com/repos/laravel/sail/zipball/4a7e41d280861ca7e35710cea011a07669b4003b",
+                "reference": "4a7e41d280861ca7e35710cea011a07669b4003b",
                 "shasum": ""
             },
             "require": {
@@ -10115,7 +10188,7 @@
                 "issues": "https://github.com/laravel/sail/issues",
                 "source": "https://github.com/laravel/sail"
             },
-            "time": "2024-09-03T20:05:33+00:00"
+            "time": "2024-09-11T20:14:29+00:00"
         },
         {
             "name": "mockery/mockery",
@@ -10797,16 +10870,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.5.33",
+            "version": "10.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "4def7a9cda75af9c2bc179ed53a8e41313e7f7cf"
+                "reference": "3c69d315bdf79080c8e115b69d1961c6905b0e18"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/4def7a9cda75af9c2bc179ed53a8e41313e7f7cf",
-                "reference": "4def7a9cda75af9c2bc179ed53a8e41313e7f7cf",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3c69d315bdf79080c8e115b69d1961c6905b0e18",
+                "reference": "3c69d315bdf79080c8e115b69d1961c6905b0e18",
                 "shasum": ""
             },
             "require": {
@@ -10878,7 +10951,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.33"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.34"
             },
             "funding": [
                 {
@@ -10894,7 +10967,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-09T06:06:56+00:00"
+            "time": "2024-09-13T05:19:38+00:00"
         },
         {
             "name": "sebastian/cli-parser",

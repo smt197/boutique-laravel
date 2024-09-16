@@ -171,8 +171,8 @@ return [
         App\Providers\TelescopeServiceProvider::class,
         App\Providers\AuthCustomServiceProvider::class,
         App\Providers\UploadServiceProvider::class,
-        // App\Providers\MongoServiceProvider::class,
-
+        App\Providers\NotificationServiceProvider::class,
+        
     ])->toArray(),
 
     /*

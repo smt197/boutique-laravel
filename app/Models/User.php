@@ -55,4 +55,9 @@ class User extends Authenticatable
     function client() {
         return $this->hasOne(Client::class, 'user_id');
     }
+
+    public function notifications()
+    {
+        return $this->hasMany('App\Models\Notification');
+    }
 }

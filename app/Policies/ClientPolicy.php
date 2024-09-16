@@ -5,9 +5,12 @@ namespace App\Policies;
 use App\Models\Client;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Log;
 
 class ClientPolicy
 {
+
+
     public function viewAny(User $user)
     {
         return $user->role->nomRole === 'BOUTIQUIER' || $user->role->nomRole === 'ADMIN';
@@ -67,4 +70,21 @@ class ClientPolicy
         return $user->role->nomRole === 'BOUTIQUIER' || $user->role->nomRole === 'CLIENT';
     }
 
+    public function viewUnreadNotifications(User $user, Client $client)
+    {
+        Log::info('User ID: ' . $user->id . ' - Client User ID: ' . $client->user_id);
+
+        // Autoriser si l'utilisateur connecté est le propriétaire du client ou un admin
+        return $user->id === $client->user_id || $user->role->nomRole === 'ADMIN'
+            ? Response::allow()
+            : Response::deny('Non autorisé à accéder à ces notifications');
+    }
+
+    public function viewReadNotifications(User $user, Client $client)
+    {
+        // Autoriser si l'utilisateur connecté est le propriétaire du client ou un admin
+        return $user->id === $client->user_id || $user->role->nomRole === 'ADMIN'
+            ? Response::allow()
+            : Response::deny('Non autorisé à accéder à ces notifications');
+    }
 }

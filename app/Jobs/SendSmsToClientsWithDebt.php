@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Client;
+use App\Notifications\DebtReminderNotification;
 use App\Services\SmsProviderInterface;
 use App\Services\SmsService;
 use Illuminate\Bus\Queueable;
@@ -33,6 +34,9 @@ class SendSmsToClientsWithDebt implements ShouldQueue
             $message = "Vous avez une dette de $totalDebt non réglée. Veuillez régulariser votre situation.";
 
             $this->smsService->sendSms($client->telephone, $message);
+            $notification = new DebtReminderNotification($totalDebt);
+            $client->notify($notification);
+
         }
     }
 }

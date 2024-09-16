@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DetteController;
 use App\Http\Controllers\MongoTestController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RecupArchiveController;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\UserController;
@@ -56,6 +57,13 @@ Route::middleware(['auth:api', 'check.auth'])->prefix('v1')->group(function () {
     Route::get('/archive/dettes/{Id}', [RecupArchiveController::class,'getArchivedDebtById']);
 
     Route::post('/restaure/dette/{debtId}', [RecupArchiveController::class,'restore']);
+
+    Route::get('/notification/client/{id}', [NotificationController::class, 'notifySingleClient']);
+    Route::post('/notification/client/all', [NotificationController::class, 'sendNotificationToGroup']);
+    Route::post('/notification/client/message', [NotificationController::class, 'notifyClientByMessage']);
+
+    Route::get('/notification/unread', [NotificationController::class, 'getUnreadNotifications']);
+    Route::get('/notification/read', [NotificationController::class, 'getReadNotifications']);
 
 
 
