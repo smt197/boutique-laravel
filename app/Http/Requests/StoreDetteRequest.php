@@ -17,6 +17,7 @@ class StoreDetteRequest extends FormRequest
         return [
             'montant' => 'required|numeric|min:0',
             'clientId' => 'required|exists:clients,id',
+            'date_echeance' => 'nullable',
             'articles' => 'required|array|min:1',
             'articles.*.articleId' => 'required|exists:articles,id',
             'articles.*.qteVente' => 'required|numeric',

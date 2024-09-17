@@ -11,7 +11,7 @@ class Client extends Model
 {
     use HasFactory, Notifiable;
 
-    protected $fillable = ['surname','telephone', 'adresse', 'user_id','qr_code'];
+    protected $fillable = ['surname','telephone', 'adresse','categorie_id','max_montant', 'user_id','qr_code'];
 
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -45,4 +45,23 @@ class Client extends Model
         static::addGlobalScope(new TelephoneScope(request()->get('telephone')));
     }
 
+    public function demandes()
+    {
+        return $this->hasMany(Demande::class);
+    }
+
+    public function categorie()
+    {
+        return $this->belongsTo(CategoryClient::class, 'categorie_id');
+    }
+
+    public function unreadNotifications()
+    {
+        return $this->notifications()->whereNull('read_at'); // Retourne le constructeur de requêtes
+    }
+
+    public function readNotifications()
+    {
+        return $this->notifications()->whereNotNull('read_at'); // Retourne le constructeur de requêtes
+    }
 }

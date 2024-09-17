@@ -18,11 +18,11 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // Récupérer l'implémentation correcte du service SMS en utilisant l'interface
-        // $smsService = app()->make(SmsProviderInterface::class);
-        // $schedule->job(new SendSmsToClientsWithDebt($smsService))->everyMinute();
+        //$smsService = app()->make(SmsProviderInterface::class);
+         //$schedule->job(new SendSmsToClientsWithDebt($smsService))->everyMinute();
         //$schedule->command('dettes:archive')->daily();
         //$schedule->job(new ArchiveDette())->everyMinute();
-        $schedule->job(new SendPaymentReminderJob())->everyFifteenSeconds(); // Envoi quotidien
+        $schedule->job(new SendPaymentReminderJob())->everyMinute(); // Envoi quotidien
     }
 
     /**

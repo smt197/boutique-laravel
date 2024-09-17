@@ -19,6 +19,7 @@ class DetteResource extends JsonResource
             'id' => $this->id,
             'montantTotal' => $this->montantTotal,
             'montantRestant' => $this->montantRestant,
+            'date_echeance' => $this->date_echeance,
             'client' => new ClientResource($this->client),
             'articles' => ArticleResource::collection($this->articles),
             'paiements' => PaiementResource::collection($this->whenLoaded('paiements')),

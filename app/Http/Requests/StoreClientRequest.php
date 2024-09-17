@@ -32,6 +32,8 @@ class StoreClientRequest extends FormRequest
             'surname' => ['required', 'string', 'max:255','unique:clients,surname'],
             'adresse' => ['string', 'max:255'],
             'telephone' => ['required',new TelephoneRule()],
+            'categorie_id' => 'required|integer|exists:categories_clients,id',
+            'max_montant' => 'nullable|numeric',
 
             'user' => ['sometimes','array'],
             'user.nom' => ['required_with:user','string'],

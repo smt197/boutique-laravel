@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             ClientSeeder::class,
             ArticleSeeder::class,
             DetteSeeder::class,
+            CategorySeeder::class
         ]);
     }
 }

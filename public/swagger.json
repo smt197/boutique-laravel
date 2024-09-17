@@ -35,6 +35,11 @@
                         "description": "L'ID du client associé à la dette",
                         "example": 1
                     },
+                    "date_echeance": {
+                        "type": "string",
+                        "description": "date echeance",
+                        "example": "2024-09-10"
+                    },
                     "articles": {
                         "type": "array",
                         "description": "Liste des articles associés à la dette",
@@ -235,6 +240,582 @@
                 }
             }
         },
+        "/api/v1/archive/clients/{id}/dettes": {
+    "get": {
+        "summary": "Récupérer les dettes archivées pour un client spécifique",
+        "description": "Récupère toutes les dettes archivées pour un client identifié par son ID.",
+        "tags": ["Dettes Archivées"],
+        "parameters": [
+            {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                    "type": "integer",
+                    "example": 89
+                },
+                "description": "ID du client pour lequel les dettes archivées doivent être récupérées."
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "Dettes archivées trouvées avec succès.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/DetteArchive"
+                            }
+                        }
+                    }
+                }
+            },
+            "404": {
+                "description": "Aucune dette archivées trouvée pour ce client."
+            }
+        }
+    }
+},
+            "/api/v1/dettes/archive": {
+      "get": {
+        "summary": "Récupérer toutes les dettes archivées",
+        "description": "Récupère toutes les dettes archivées.",
+        "tags": ["Dettes Archivées"],
+        "responses": {
+          "200": {
+            "description": "Dettes archivées trouvées avec succès.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Dettes"
+                  }
+                }
+              }
+            }
+          }
+        }
+    }
+        },
+
+        "/api/v1/archive/dettes/{id}": {
+      "get": {
+        "summary": "Récupérer une dette archivée par ID",
+        "description": "Récupère une dette archivée spécifique en fonction de son ID.",
+        "tags": ["Dettes Archivées"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "ID de la dette archivées à récupérer."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dette archivée trouvée avec succès.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dettes"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Dette archivée non trouvée pour cet ID."
+          }
+        }
+      }
+    },
+
+        "/api/v1/notification/client/{id}": {
+      "get": {
+        "summary": "Notifie un seul client",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID du client à notifier"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification envoyée au client",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Notification envoyée au client."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Client non trouvé"
+          },
+          "401": {
+            "description": "Non autorisé"
+          }
+        }
+      }
+    },
+
+
+        "/api/v1/notification/client/all": {
+      "post": {
+        "summary": "Envoie une notification à un groupe de clients",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "client_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "example": [1, 2, 3]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Notifications envoyées avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Notifications envoyées avec succès au groupe."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Données invalides"
+          }
+        }
+      }
+    },
+
+
+        "/api/v1/notification/client/message": {
+      "post": {
+        "summary": "Envoie un message personnalisé à un groupe de clients",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "client_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "example": [1, 2, 3]
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "Bonjour, Pensez a regulariser vos dettes"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Messages envoyés avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Notifications envoyées avec succès au groupe."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Données invalides"
+          }
+        }
+      }
+    },
+
+
+        "/api/v1/notification/unread": {
+      "get": {
+        "summary": "Récupère les notifications non lues du client authentifié",
+        "responses": {
+          "200": {
+            "description": "Notifications non lues récupérées avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statut": {
+                      "type": "string",
+                      "example": "Success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Notification"
+                      },
+                      "example": [ "Liste des notifications non lues"]
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Notifications non lues du client récupérées avec succès."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Client non authentifié"
+          },
+          "404": {
+            "description": "Client non trouvé ou aucune notification non lue"
+          }
+        }
+      }
+    },
+    "/api/v1/notification/read": {
+      "get": {
+        "summary": "Récupère les notifications lues du client authentifié",
+        "responses": {
+          "200": {
+            "description": "Notifications lues récupérées avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Notification"
+                      },
+                      "example": [ "Liste des notifications lues"]
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Notifications lues récupérées avec succès."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Client non authentifié"
+          },
+          "404": {
+            "description": "Client non trouvé"
+          }
+        }
+      }
+    },
+
+        "/api/v1/demandes/notifications": {
+      "get": {
+        "summary": "Récupère les notifications du boutiquier",
+        "responses": {
+          "200": {
+            "description": "Notifications récupérées avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "notifications": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Notification"
+                      },
+                      "example": [ "Liste des notifications pour le boutiquier"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Utilisateur non authentifié"
+          },
+          "403": {
+            "description": "Accès non autorisé"
+          }
+        }
+      }
+    },
+        
+
+    "/api/v1/demandes": {
+        "post": {
+          "summary": "Crée une nouvelle demande de dette",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "montant": {
+                      "type": "number",
+                      "format": "float",
+                      "example": 3000.0
+                    },
+                    "articles": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "article_id": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "qteVente": {
+                            "type": "integer",
+                            "example": 2
+                          },
+                          "prixVente": {
+                            "type": "number",
+                            "format": "float",
+                            "example": 100.0
+                          }
+                        },
+                        "required": ["article_id", "qteVente", "prixVente"]
+                      }
+                    }
+                  },
+                  "required": ["montant", "articles"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Demande de dette créée avec succès",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "example": "Demande de dette enregistrée avec succès"
+                      },
+                      "demande": {
+                        "$ref": "#/components/schemas/Demande"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Non authentifié",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "example": "Vous devez vous connecter pour effectuer cette action"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Interdiction d'accès",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "example": "Vous ne pouvez pas soumettre cette demande"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Requête invalide",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string",
+                        "example": "Les clients Bronze ne peuvent pas avoir de dettes."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "get": {
+          "summary": "Récupère les demandes du client authentifié",
+          "parameters": [
+            {
+              "in": "query",
+              "name": "etat",
+              "schema": {
+                "type": "string",
+                "enum": ["en attente", "annulee"],
+                "example": "en attente"
+              },
+              "description": "Filtre les demandes par état"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Demandes récupérées avec succès",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "demandes": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Demande"
+                        },
+                        "example": []
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Non authentifié",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "example": "Vous devez vous connecter pour effectuer cette action"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "État invalide",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string",
+                        "example": "État invalide"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+
+
+        "/api/v1/demandes/{id}/relance": {
+      "post": {
+        "summary": "Relance une demande annulée",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID de la demande à relancer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Relance planifiée avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "La relance sera envoyée dans 2 jours"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "La demande doit être annulée pour envoyer une relance"
+          },
+          "404": {
+            "description": "Demande non trouvée"
+          }
+        }
+    }
+},
+
+
         "/api/v1/login": {
             "post": {
                 "summary": "Connexion utilisateur",
@@ -727,7 +1308,7 @@
                 }
             }
         },
-        "/api/v1/clients": {
+        "/api/v1/client": {
   "post": {
     "summary": "Créer un nouveau client avec un utilisateur associé",
     "description": "Crée un nouveau client et, facultativement, un compte utilisateur associé.",
@@ -753,6 +1334,16 @@
                 "type": "string",
                 "description": "L'adresse du client",
                 "example": "123 Rue de Paris"
+              },
+              "max_montant": {
+                "type": "float",
+                "description": "montant max",
+                "example": 564.98
+              },
+              "categorie_id": {
+                "type": "integer",
+                "description": "categorie ",
+                "example": "Silver"
               },
               "user": {
                 "type": "object",
@@ -817,7 +1408,7 @@
     }
   }
 },
-        "/api/v1/clientss": {
+        "/api/v1/clients": {
             "get": {
                 "summary": "Liste des clients",
                 "description": "Récupère la liste de tous les clients.",
@@ -1167,10 +1758,85 @@
                     }
                 }
             }
-        }
-    },
+        },
+        "/api/v1/demandes/all": {
+            "get": {
+              "summary": "Récupère toutes les demandes, avec option de filtrage par statut",
+              "parameters": [
+                {
+                  "in": "query",
+                  "name": "status",
+                  "schema": {
+                    "type": "string",
+                    "enum": ["en attente", "annulee"]
+                  },
+                  "description": "Filtre les demandes par statut"
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Demandes récupérées avec succès",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "demandes": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/Demande"
+                            },
+                            "example": ["Liste des demandes"]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Statut invalide"
+                }
+              }
+            }
+          }
+        },
+    
     "components": {
         "schemas": {
+
+            "Demande": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "montant": {
+            "type": "number",
+            "format": "float"
+          },
+          "client_id": {
+            "type": "integer"
+          },
+          "details": {
+            "type": "string"
+          },
+          "articles": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+    },
+            
             "Article": {
                 "type": "object",
                 "properties": {
@@ -1206,7 +1872,18 @@
                     },
                     "adresse": {
                         "type": "string"
+                    },
+                    "categorie_id": {
+                        "type": "number",
+                        "format": "integer"
+
+                    },
+                    "max_montant": {
+                        "type": "number",
+                        "format": "float"
                     }
+
+
                 }
             },
             "Dettes": {
@@ -1217,6 +1894,9 @@
                     },
                     "client_id": {
                         "type": "integer"
+                    },
+                    "date_echeance": {
+                        "type": "string"
                     },
                     "montantTotal": {
                         "type": "number",
@@ -1273,7 +1953,184 @@
                     }
                     
                 }
+            },
+
+            "Notification": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "read_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+
+
+            "DetteArchive": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 89
+          },
+          "montantRestant": {
+            "type": "string",
+            "example": "0.00"
+          },
+          "montantTotal": {
+            "type": "string",
+            "example": "40000.00"
+          },
+          "montantVerse": {
+            "type": "string",
+            "example": "40000.00"
+          },
+          "articles": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "libelle": {
+                  "type": "string",
+                  "example": "Lait"
+                },
+                "prix": {
+                  "type": "string",
+                  "example": "564.89"
+                },
+                "quantite": {
+                  "type": "integer",
+                  "example": 20
+                },
+                "reference": {
+                  "type": "string",
+                  "example": "REF22"
+                },
+                "pivot": {
+                  "type": "object",
+                  "properties": {
+                    "article_id": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "dette_id": {
+                      "type": "integer",
+                      "example": 89
+                    },
+                    "prixVente": {
+                      "type": "string",
+                      "example": "200.00"
+                    },
+                    "qteVente": {
+                      "type": "integer",
+                      "example": 10
+                    }
+                  },
+                  "required": [
+                    "article_id",
+                    "dette_id",
+                    "prixVente",
+                    "qteVente"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "libelle",
+                "prix",
+                "quantite",
+                "reference",
+                "pivot"
+              ]
             }
+          },
+          "client": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 256
+              },
+              "adresse": {
+                "type": "string",
+                "example": "parcelle"
+              },
+              "categorie_id": {
+                "type": "integer",
+                "example": 2
+              },
+              "max_montant": {
+                "type": "string",
+                "example": "30000.00"
+              },
+              "qr_code": {
+                "type": "string",
+                "example": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjQwMCIgaGVpZ2h0PSI0MDAiIHZpZXdCb3g9IjAgMCA0MDAgNDAwIj48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2ZlZmVmZSIvPjxnIHRyYW5zZm9ybT0ic2NhbGUoMTMuNzkzKSI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNC4wMDAsNC4wMDApIj48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMCAwTDEwIDFMOCAxTDggMkwxMCAyTDEwIDNMOCAzTDggNEw5IDRMOSA1TDggNUw4IDdMOSA3TDkgOEw2IDhMNiA5TDcgOUw3IDEwTDYgMTBMNiAxMUw1IDExTDUgOEwwIDhMMCAxMkwyIDEyTDIgMTNMMyAxM0wzIDExTDUgMTFMNSAxM0w3IDEzTDcgMTJMOCAxMkw4IDE1TDkgMTVMOSAxMkw4IDEyTDggMTFMOSAxMUw5IDEwTDEwIDEwTDEwIDlMOSA5TDkgOEwxMCA4TDEwIDdMMTEgN0wxMSA2TDEwIDZMMTAgN0w5IDdMOSA1TDEwIDVMMTAgM0wxMSAzTDExIDBaTTEyIDBMMTIgNEwxMSA0TDExIDVMMTIgNUwxMiA4TDExIDhMMTEgMTBMMTIgMTBMMTIgMTJMMTMgMTJMMTMgMTRMMTIgMTRMMTIgMTNMMTEgMTNMMTEgMTFMMTAgMTFMMTAgMTNMMTEgMTNMMTEgMTRMMTIgMTRMMTIgMTVMMTEgMTVMMTEgMThMMTIgMThMMTIgMTlMOSAxOUw5IDE4TDEwIDE4TDEwIDE2TDggMTZMOCAyMUwxMSAyMUwxMSAyMEwxMyAyMEwxMyAyMUwxNSAyMUwxNSAyMEwxMyAyMEwxMyAxOUwxNiAxOUwxNiAyMEwxOSAyMEwxOSAyMUwyMCAyMUwyMCAyMEwxOSAyMEwxOSAxOUwxNiAxOUwxNiAxOEwxOCAxOEwxOCAxN0wxNiAxN0wxNiAxNEwxNyAxNEwxNyAxNkwxOSAxNkwxOSAxN0wyMSAxN0wyMSAxNUwyMCAxNUwyMCAxNEwyMSAxNEwyMSAxM0wyMCAxM0wyMCAxMkwyMSAxMkwyMSAxMUwyMCAxMUwyMCAxMEwyMSAxMEwyMSA5TDIwIDlMMjAgOEwxOSA4TDE5IDlMMjAgOUwyMCAxMEwxOSAxMEwxOSAxMUwxNiAxMUwxNiAxMEwxOCAxMEwxOCA4TDE3IDhMMTcgOUwxNiA5TDE2IDhMMTUgOEwxNSA5TDE2IDlMMTYgMTBMMTQgMTBMMTQgOEwxMyA4TDEzIDVMMTIgNUwxMiA0TDEzIDRMMTMgMFpNOCA5TDggMTBMNyAxMEw3IDExTDYgMTFMNiAxMkw3IDEyTDcgMTFMOCAxMUw4IDEwTDkgMTBMOSA5Wk0xMiA5TDEyIDEwTDEzIDEwTDEzIDlaTTIgMTBMMiAxMUwzIDExTDMgMTBaTTEzIDExTDEzIDEyTDE1IDEyTDE1IDEzTDE0IDEzTDE0IDE0TDEzIDE0TDEzIDE2TDE1IDE2TDE1IDE1TDE0IDE1TDE0IDE0TDE2IDE0TDE2IDEzTDE3IDEzTDE3IDE0TDIwIDE0TDIwIDEzTDE5IDEzTDE5IDEyTDE2IDEyTDE2IDExWk0xMiAxN0wxMiAxOEwxMyAxOEwxMyAxN1pNMTQgMTdMMTQgMThMMTUgMThMMTUgMTdaTTAgMEwwIDdMNyA3TDcgMFpNMSAxTDEgNkw2IDZMNiAxWk0yIDJMMiA1TDUgNUw1IDJaTTIxIDBMMTQgMEwxNCA3TDIxIDdaTTIwIDFMMTUgMUwxNSA2TDIwIDZaTTE5IDJMMTYgMkwxNiA1TDE5IDVaTTAgMjFMNyAyMUw3IDE0TDAgMTRaTTEgMjBMNiAyMEw2IDE1TDEgMTVaTTIgMTlMNSAxOUw1IDE2TDIgMTZaIiBmaWxsPSIjMDAwMDAwIi8+PC9nPjwvZz48L3N2Zz4K"
+              },
+              "required": [
+                "id",
+                "adresse",
+                "categorie_id",
+                "max_montant",
+                "qr_code"
+              ]
+            }
+          },
+          "paiements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "example": 8
+                },
+                "montant": {
+                  "type": "string",
+                  "example": "40000.00"
+                }
+              },
+              "required": [
+                "id",
+                "montant"
+              ]
+            }
+          },
+          "archived_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-09-17T09:33:28.800542Z"
+          }
+        },
+        "required": [
+          "id",
+          "montantRestant",
+          "montantTotal",
+          "montantVerse",
+          "articles",
+          "client",
+          "paiements",
+          "archived_at"
+        ]
+      }
 
         },
         "securitySchemes": {

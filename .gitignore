@@ -18,6 +18,5 @@ yarn-error.log
 /.idea
 /.vscode
 
-config/projetdettelravel-firebase.json
-
+config/projetdette.json
 app/Services/SmsService.php

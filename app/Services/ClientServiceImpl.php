@@ -38,15 +38,20 @@ class ClientServiceImpl implements ClientService
             Log::info('Début de storeClient avec les données:', ['data' => $data]);
     
             // Extraire les données du client
-            $clientData = array_intersect_key($data, array_flip(['surname','telephone', 'adresse']));
+            $clientData = array_intersect_key($data, array_flip(['surname','telephone', 'adresse', 'categorie_id', 'max_montant']));
             
             Log::info('Données client extraites:', ['clientData' => $clientData]);
     
             // Vérifier que toutes les données client requises sont présentes
-            if (!isset($clientData['surname']) || !isset($clientData['adresse']) || !isset($clientData['telephone'])) {
+            if (!isset($clientData['surname']) || !isset($clientData['adresse']) || !isset($clientData['telephone']) || !isset($clientData['max_montant'])){
                 throw new ServiceError("Données client incomplètes.");
             }
-            
+
+            // // Définir le montant maximum selon la catégorie du client
+            // $maxMontant = $this->getMaxMontantByCategory($clientData['categorie_id']);
+            // $clientData['max_montant'] = $maxMontant;
+
+
             // Créer le client
             $client = $this->clientRepository->create($clientData);
             Log::info('Client créé avec succès:', ['client' => $client]);
@@ -132,6 +137,18 @@ class ClientServiceImpl implements ClientService
             Log::error('Erreur inattendue:', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             throw new ServiceError('Erreur inattendue: ' . $e->getMessage());
         }
+    }
+
+    private function getMaxMontantByCategory($categoryId)
+    {
+        // Définir les montants maximums par catégorie
+        $categoryMontants = [
+            1 => 50000, // Gold
+            2 => 30000, // Silver
+            3 => 10000, // Bronze
+        ];
+
+        return $categoryMontants[$categoryId];
     }
 
     public function getAllClients(Request $request)

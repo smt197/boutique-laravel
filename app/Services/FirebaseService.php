@@ -11,11 +11,11 @@ class FirebaseService
 
     public function __construct()
     {
-        $serviceAccountPath =  base_path('config/projetdettelravel-firebase.json');
+        $serviceAccountPath =  base_path('config/projetdette.json');
 
         $firebase = (new Factory)
             ->withServiceAccount($serviceAccountPath)
-            ->withDatabaseUri('https://projetdettelravel-default-rtdb.firebaseio.com/');
+            ->withDatabaseUri(env('FIREBASE_DATABASE_URL'));
 
         $this->database = $firebase->createDatabase();
     }

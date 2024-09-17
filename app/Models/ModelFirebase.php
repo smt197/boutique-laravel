@@ -11,7 +11,7 @@ class ModelFirebase
     public function __construct()
     {
         $factory = (new Factory)
-            ->withServiceAccount(config_path('projetdettelravel-firebase.json'))
+            ->withServiceAccount(config_path('projetdette.json'))
             ->withDatabaseUri(env('FIREBASE_DATABASE_URL'));
         
         $this->database = $factory->createDatabase();
@@ -96,34 +96,36 @@ class ModelFirebase
         }
     }
 
-    public function insert($path, $data){
-        try {
-            // Obtenir une référence à la base de données à partir du chemin donné
-            $reference = $this->database->getReference($path);
+    public function insert($path, $data)
+{
+    try {
+        // Obtenir une référence à la base de données à partir du chemin donné
+        $reference = $this->database->getReference($path);
 
-            // Ajouter les données dans la base de données
-            $reference->set($data);
+        // Ajouter les données dans la base de données
+        // Utilisez push() pour ajouter des données sans écraser les existantes
+        $reference->push($data);
 
-            // Log de l'insertion réussie
-            Log::info('Dette ajoutée avec succès pour le chemin '. $path.':', $data);
+        // Log de l'insertion réussie
+        Log::info('Dette ajoutée avec succès pour le chemin '. $path.':', $data);
 
-            // Retourner un message de succès
-            return [
-               'status' => 'SUCCESS',
-               'message' => 'Dette ajoutée avec succès',
-                'code' => 201
-            ];
+        // Retourner un message de succès
+        return [
+           'status' => 'SUCCESS',
+           'message' => 'Dette ajoutée avec succès',
+            'code' => 201
+        ];
 
-        } catch (\Exception $e) {
-            Log::error('Erreur lors de l\'insertion de la dette pour le chemin '. $path.': '. $e->getMessage());
-            return [
-               'status' => 'ERROR',
-               'message' => 'Erreur lors de l\'insertion de la dette',
-                'code' => 500
-            ];
-        }
-
+    } catch (\Exception $e) {
+        Log::error('Erreur lors de l\'insertion de la dette pour le chemin '. $path.': '. $e->getMessage());
+        return [
+           'status' => 'ERROR',
+           'message' => 'Erreur lors de l\'insertion de la dette',
+            'code' => 500
+        ];
     }
+}
+
 
     public function deleteById($path, $debtId){
         try {

@@ -64,6 +64,7 @@ class MongoArchiveRepository implements ArchiveRepositoryInterface
         
         // Convertir le document BSON en tableau PHP
         $debtArray = $this->convertBSONToArray($archivedDebt);
+        dd($debtArray);
         
         // Vérifier le format du tableau
         Log::info('Tableau de dette à insérer : ' . print_r($debtArray, true));

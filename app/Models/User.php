@@ -10,7 +10,7 @@ use Laravel\Passport\HasApiTokens; // Importez le trait ici
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use Notifiable, HasApiTokens, HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -52,12 +52,18 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
+    public function hasRole($roleName)
+    {
+        return $this->role && $this->role->nomRole === $roleName;
+    }
+
     function client() {
         return $this->hasOne(Client::class, 'user_id');
     }
 
-    public function notifications()
+    public function NotReadBoutiq()
     {
-        return $this->hasMany('App\Models\Notification');
+        return $this->notifications()->whereNull('read_at'); // Retourne le constructeur de requêtes
     }
+
 }

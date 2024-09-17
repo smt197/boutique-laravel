@@ -68,6 +68,7 @@ class DetteServiceImpl implements DetteService
                 'montantTotal' => $data['montant'],
                 'client_id' => $data['clientId'],
                 'montantRestant' => $data['montant'], // Initialement, montantRestant = montantTotal
+                'date_echeance' => $data['date_echeance'],
             ];
 
             $dette = $this->detteRepository->create($detteData);
